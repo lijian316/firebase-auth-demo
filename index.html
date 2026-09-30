@@ -114,8 +114,20 @@
 
   .shot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px; }
   .shot { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--code-bg); }
-  .shot img { width: 100%; display: block; }
+  .shot img { width: 100%; display: block; cursor: zoom-in; }
   .shot-cap { font-size: 12px; color: var(--muted); padding: 8px 10px; border-top: 1px solid var(--border); }
+
+  .lightbox {
+    display: none; position: fixed; inset: 0; background: rgba(10,12,16,.88);
+    z-index: 100; align-items: center; justify-content: center; padding: 30px; cursor: zoom-out;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox img { max-width: 100%; max-height: 100%; border-radius: 8px; box-shadow: 0 8px 40px rgba(0,0,0,.5); }
+  .lightbox-close {
+    position: fixed; top: 20px; right: 24px; color: #fff; font-size: 28px;
+    width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,.1); border-radius: 50%;
+  }
 
   .pending-card {
     border: 1.5px dashed var(--border); border-radius: var(--radius);
@@ -331,6 +343,27 @@
 </div>
 
 <footer>Firebase Auth Demo · 第三方登录接入方案分析</footer>
+
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-close">&times;</div>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<script>
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  document.querySelectorAll('.shot img').forEach(img => {
+    img.addEventListener('click', () => {
+      lightboxImg.src = img.src;
+      lightboxImg.alt = img.alt;
+      lightbox.classList.add('open');
+    });
+  });
+  lightbox.addEventListener('click', () => lightbox.classList.remove('open'));
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') lightbox.classList.remove('open');
+  });
+</script>
 
 </body>
 </html>
