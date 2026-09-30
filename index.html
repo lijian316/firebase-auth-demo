@@ -308,44 +308,6 @@
       <p class="muted">登录页只提供「Login with Zynga Poker」（自家账号体系）和「Login with Facebook」两个入口，没有 Google 登录选项，也没有 Apple 登录选项。</p>
     </div>
 
-    <div class="competitor-card">
-      <div class="competitor-head">
-        <div>
-          <div class="competitor-name">竞品 4 · 8 Ball Pool（Miniclip）</div>
-          <div class="competitor-url">8ballpool.com</div>
-        </div>
-      </div>
-      <div class="conclusion-badge alt">✓ 支持 Google 登录 · 标准 OAuth 授权码模式，服务端换取，未使用 Firebase</div>
-
-      <h3>登录入口：Facebook / Google / Miniclip ID 三选一</h3>
-      <div class="shot-grid" style="grid-template-columns: 1fr;">
-        <div class="shot" style="max-width: 320px;">
-          <img src="assets/competitor-8ballpool-login.jpg" alt="8 Ball Pool 登录弹窗">
-          <div class="shot-cap">登录弹窗，Facebook / Google / Miniclip ID 三个选项</div>
-        </div>
-      </div>
-
-      <h3>证据：点击 Google 登录后触发的请求</h3>
-      <div class="jwt-block">GET <span class="v">https://accounts.google.com/v3/signin/identifier</span>
-  ?client_id=<span class="c">REDACTED</span>
-  &redirect_uri=<span class="v">https://me.miniclip.com/google/login/callback</span>
-  &response_type=<span class="v">code</span>
-  &scope=<span class="v">profile+email</span>
-  &service=<span class="c">lso</span>
-  &flowName=<span class="c">GeneralOAuthFlow</span>
-  &app_domain=<span class="v">https://me.miniclip.com</span></div>
-
-      <div class="compare-note">
-        ⚠️ <div><b>这是第三种、也是最"传统"的模式：</b>关键在 <code>response_type=code</code> —— 拿到的是一次性 <b>Authorization Code</b>，不是 idToken。这个 code 必须拿着 <code>client_secret</code> 才能换成真正的令牌，而 client_secret 不可能放在前端，所以只能是 <b>Miniclip 自己的后端服务器</b>（回调地址 <code>me.miniclip.com</code>，不是 Firebase 的 <code>firebaseapp.com</code>）在服务端完成"code 换 token"这一步。整个过程中，浏览器前端从头到尾都没有拿到任何 Google 或 Firebase 签发的 token——比弹窗直出 idToken（WSOP）、Firebase 中转（MegaHitPoker）都更传统，也是三种模式里前端暴露面最小的一种。</div>
-      </div>
-
-      <ul class="evidence-list">
-        <li><code>redirect_uri</code> 指向 <code>me.miniclip.com</code>（Miniclip 自己的域名），不是任何 <code>*.firebaseapp.com</code> 地址</li>
-        <li><code>response_type=code</code>，走的是标准 OAuth 2.0 <b>Authorization Code</b> 流程，不是 Firebase 或 GIS 常用的 <code>id_token</code> / <code>code id_token</code></li>
-        <li>没有出现 <code>identitytoolkit.googleapis.com</code>、<code>securetoken.googleapis.com</code> 等任何 Firebase 相关请求</li>
-      </ul>
-    </div>
-
     <div class="pending-card">后续竞品持续补充中…</div>
   </section>
 
