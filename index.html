@@ -252,8 +252,9 @@
       </div>
       <div class="conclusion-badge alt">✓ 支持 Google 登录 · 直连 Google Identity Services，未使用 Firebase</div>
 
-      <h3>登录交互：One Tap 优先，关闭后降级为弹窗</h3>
-      <p class="muted">进入页面会先自动弹出 Google 原生的账号选择卡片（One Tap / FedCM），如果用户把这个卡片关掉，再点"GOOGLE SIGN-IN"按钮会改用传统的 OAuth 弹窗——是 Google Identity Services 库的标准降级行为。</p>
+      <h3>登录交互：One Tap 自动弹出 + 按钮弹窗，两条独立入口</h3>
+      <p class="muted">进入页面会先自动弹出 Google 原生的账号选择卡片（One Tap / FedCM），这是用 <code>google.accounts.id.prompt()</code> 实现的自动入口；页面上的"GOOGLE SIGN-IN"按钮是另一条<b>独立</b>的入口，从页面加载起就一直存在，点击后会触发传统的 OAuth 弹窗。关掉 One Tap 卡片后点按钮能弹窗，只是切换到了这条本来就写好的路径，并不是 GIS 库检测到 One Tap 被关闭后自动切换的"降级"行为——这两条入口是 WSOP 前端各自独立实现的。</p>
+      <p class="muted" style="margin-top: 10px;">另外 Google One Tap 本身确实有真实的冷却机制：用户关闭/多次忽略后，Google 会在一段时间内不再自动弹出 One Tap（这个状态由 Google 侧控制），但它只影响"下次是否自动弹出"，跟按钮点击触发弹窗这件事没有关系。</p>
 
       <div class="shot-grid">
         <div class="shot">
