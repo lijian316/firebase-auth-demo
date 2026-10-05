@@ -228,7 +228,6 @@
       </div>
       <div class="conclusion-badge"><span class="zh">✓ 支持 Google 登录 · 采用 Firebase Auth 对接</span><span class="en">✓ Google sign-in supported · Integrated with Firebase Auth</span></div>
 
-      <h3><span class="zh">证据（浏览器 Network 抓包）</span><span class="en">Evidence (browser Network capture)</span></h3>
       <ul class="evidence-list">
         <li class="zh">登录请求打到 <code>identitytoolkit.googleapis.com/v1/accounts:signInWithIdp</code> —— 这是 Firebase Identity Toolkit 的专属接口</li><li class="en">The sign-in request goes to <code>identitytoolkit.googleapis.com/v1/accounts:signInWithIdp</code> — an endpoint specific to Firebase Identity Toolkit</li>
         <li class="zh">请求里的 <code>requestUri</code> 指向 <code>https://mega-hit-poker.firebaseapp.com/__/auth/handler</code> —— 这个 <code>__/auth/handler</code> 路径是 Firebase Auth 自动托管的登录中转页，是 Firebase 的特征标识</li><li class="en">The <code>requestUri</code> in the request points to <code>https://mega-hit-poker.firebaseapp.com/__/auth/handler</code> — the <code>__/auth/handler</code> path is the sign-in relay page automatically hosted by Firebase Auth, a telltale sign of Firebase</li>
