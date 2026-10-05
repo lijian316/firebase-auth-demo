@@ -93,7 +93,6 @@
   .ap-tag { font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 10px; background: var(--code-bg); color: var(--muted); }
   .ap-tag.ok { background: var(--ok-bg); color: var(--ok); }
   .ap-tag.warn { background: #fdecec; color: #b13a3a; }
-  .ap-tag.mid { background: #fdf1de; color: #b8860b; }
   .ap ul { list-style: none; margin: 0; padding: 0; }
   .ap li { display: flex; gap: 12px; padding: 7px 0; border-top: 1px dashed var(--border); font-size: 13.5px; }
   .ap li:first-child { border-top: none; }
@@ -158,7 +157,7 @@
       </ul>
     </div>
     <div class="ap">
-      <div class="ap-head"><span class="ap-num"><span class="zh">方案 4</span><span class="en">Approach 4</span></span><span class="ap-name">One Tap + Authorization Code</span><span class="ap-tag mid"><span class="zh">不太建议</span><span class="en">Less recommended</span></span></div>
+      <div class="ap-head"><span class="ap-num"><span class="zh">方案 4</span><span class="en">Approach 4</span></span><span class="ap-name">One Tap + Authorization Code</span></div>
       <ul>
         <li><span class="k"><span class="zh">触发 API</span><span class="en">Trigger API</span></span><span class="v "><span class="zh">平时 <code>accounts.id.prompt()</code>，冷却期间 <code>oauth2.initCodeClient()</code></span><span class="en">Normally <code>accounts.id.prompt()</code>; during the cooldown <code>oauth2.initCodeClient()</code></span></span></li>
         <li><span class="k"><span class="zh">弹窗形式</span><span class="en">Popup type</span></span><span class="v "><span class="zh">平时页内自动卡片，冷却期间独立弹窗</span><span class="en">Automatic in-page card normally; independent popup during the cooldown</span></span></li>
@@ -169,7 +168,7 @@
         <li><span class="k"><span class="zh">后端校验要改</span><span class="en">Backend verification needs rewriting</span></span><span class="v "><span class="zh">校验逻辑复用现有，但要为冷却路径新增 code 换取接口（同方案 3）</span><span class="en">Verification logic is reused, but a code-exchange endpoint must be added for the cooldown path (same as Approach 3)</span></span></li>
         <li><span class="k"><span class="zh">能否保持登录</span><span class="en">Can keep the user signed in</span></span><span class="v "><span class="zh">走 One Tap 路径时需自建会话；走方案 3 路径时可拿到 refresh_token 静默续期</span><span class="en">On the One Tap path you need your own session; on the Approach 3 path a refresh_token allows silent renewal</span></span></li>
       </ul>
-      <div class="ap-note"><span class="zh">是否处于冷却期没有官方 API 可以判断，只能靠非官方信号推断（详见下方「如何判断 One Tap 是否处于冷却期」）；而方案 3 能让 Google 登录在形式和体验上与 Apple、Facebook 登录保持一致，所以不太建议这个混合方案。</span><span class="en">There is no official API to tell whether the cooldown is in effect; it can only be inferred from unofficial signals (see “How to tell whether One Tap is on cooldown” below). Approach 3 also keeps Google sign-in visually and behaviorally consistent with Apple and Facebook sign-in, so this hybrid is less recommended.</span></div>
+      <div class="ap-note"><span class="zh">是否处于冷却期没有官方 API 可以判断，只能靠非官方信号推断（详见下方「如何判断 One Tap 是否处于冷却期」）；而方案 3 能让 Google 登录在形式和体验上与 Apple、Facebook 登录保持一致。</span><span class="en">There is no official API to tell whether the cooldown is in effect; it can only be inferred from unofficial signals (see “How to tell whether One Tap is on cooldown” below). Approach 3 also keeps Google sign-in visually and behaviorally consistent with Apple and Facebook sign-in.</span></div>
     </div>
   </div>
           <p class="zh muted" style="margin-top:12px">Access Token 方案会把"Google 签名担保身份"降级成"客户端自己上报的数据"，安全性下降，所以推荐采用 Authorization Code 方案。</p><p class="en muted" style="margin-top:12px">The Access Token approach downgrades “an identity Google vouches for” to “data the client self-reports” — a real drop in security — so Authorization Code is the recommended approach.</p>
