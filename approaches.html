@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>方案二细分：三种实现方式对比</title>
+<script>(function(){var l=null;try{l=localStorage.getItem('lang')}catch(e){}if(!l)l=(navigator.language||'').toLowerCase().indexOf('zh')===0?'zh':'en';document.documentElement.lang=l==='en'?'en':'zh-CN';})();</script>
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --surface: #ffffff;
+    --border: #e2e5ea;
+    --text: #1c2128;
+    --muted: #636c76;
+    --accent: #2563eb;
+    --accent-bg: #eaf1ff;
+    --ok: #1a8a5f;
+    --ok-bg: #e6f5ee;
+    --warn: #b8860b;
+    --code-bg: #f1f3f6;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    line-height: 1.7; font-size: 15px;
+  }
+  a { color: var(--accent); }
+  code {
+    font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+    background: var(--code-bg); padding: 2px 6px; border-radius: 5px; font-size: .85em;
+  }
+
+  
+  html[lang="zh-CN"] .en { display: none !important; }
+  html[lang="en"] .zh { display: none !important; }
+
+  .hero { background: var(--surface); border-bottom: 1px solid var(--border); padding: 40px 24px 28px; }
+  .hero-inner { max-width: 880px; margin: 0 auto; position: relative; }
+  .hero-title { font-size: 24px; font-weight: 700; }
+  .hero-sub { color: var(--muted); font-size: 13px; margin-top: 6px; }
+  .back { display: inline-block; margin-top: 16px; font-size: 13px; font-weight: 600; text-decoration: none; }
+  .back:hover { text-decoration: underline; }
+  .lang-switch { position: absolute; top: -18px; right: 0; display: flex; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
+  .lang-switch button { font: inherit; font-size: 12px; font-weight: 600; padding: 5px 12px; border: none; background: transparent; color: var(--muted); cursor: pointer; }
+  .lang-switch button.active { background: var(--accent); color: #fff; }
+
+  .main { max-width: 880px; margin: 0 auto; padding: 32px 24px 80px; }
+  p.muted { color: var(--muted); font-size: 13.5px; margin-bottom: 12px; }
+  .cmp-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+  table.cmp { width: 100%; border-collapse: collapse; min-width: 600px; }
+  table.cmp th, table.cmp td { padding: 11px 14px; text-align: left; font-size: 13px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); vertical-align: middle; }
+  table.cmp th:last-child, table.cmp td:last-child { border-right: none; }
+  table.cmp tr:last-child td { border-bottom: none; }
+  table.cmp thead th { background: var(--code-bg); font-size: 13px; }
+  table.cmp .rowlabel { background: var(--code-bg); font-weight: 600; font-size: 12.5px; width: 22%; }
+  table.cmp .recol { background: #f4fbf7; }
+  table.cmp thead th.recol { background: #e3f4ea; }
+  table.cmp .win { color: var(--ok); font-weight: 600; }
+  table.cmp .lose { color: var(--muted); }
+  table.cmp .th-num { display: block; font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  table.cmp .th-tag { display: inline-block; margin-top: 5px; font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 8px; background: #fff; color: var(--muted); border: 1px solid var(--border); }
+  table.cmp .th-tag.ok { background: var(--ok-bg); color: var(--ok); border-color: transparent; }
+  table.cmp .th-tag.warn { background: #fdecec; color: #b13a3a; border-color: transparent; }
+  footer { text-align: center; color: var(--muted); font-size: 12px; padding: 30px 0 10px; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="lang-switch"><button type="button" data-lang="zh">中文</button><button type="button" data-lang="en">EN</button></div>
+    <div class="hero-title"><span class="zh">方案二细分：三种实现方式对比</span><span class="en">Option 2 breakdown: comparing the three approaches</span></div>
+    <div class="hero-sub"><span class="zh">Google 登录 · 自研维持登录方案</span><span class="en">Google Sign-In · Self-built session persistence</span></div>
+    <a class="back" href="./#recommendation"><span class="zh">← 返回 Google 登录方案分析</span><span class="en">← Back to the Google login analysis</span></a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="cmp-wrap">
+            <table class="cmp">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th><span class="th-num"><span class="zh">方案 1</span><span class="en">Approach 1</span></span>ID Token<br><span class="th-tag"><span class="zh">现状</span><span class="en">Current</span></span></th>
+                  <th><span class="th-num"><span class="zh">方案 2</span><span class="en">Approach 2</span></span>Access Token<br><span class="th-tag warn"><span class="zh">不推荐</span><span class="en">Not recommended</span></span></th>
+                  <th class="recol"><span class="th-num"><span class="zh">方案 3</span><span class="en">Approach 3</span></span>Authorization Code<br><span class="th-tag ok"><span class="zh">推荐</span><span class="en">Recommended</span></span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="rowlabel"><span class="zh">触发 API</span><span class="en">Trigger API</span></td><td><code>accounts.id.prompt()</code></td><td><code>oauth2.initTokenClient()</code></td><td class="recol"><code>oauth2.initCodeClient()</code></td></tr>
+                <tr><td class="rowlabel"><span class="zh">弹窗形式</span><span class="en">Popup type</span></td><td class="lose"><span class="zh">页内自动卡片</span><span class="en">Automatic in-page card</span></td><td><span class="zh">独立弹窗</span><span class="en">Independent popup</span></td><td class="recol win"><span class="zh">独立弹窗</span><span class="en">Independent popup</span></td></tr>
+                <tr><td class="rowlabel"><span class="zh">受 One Tap 冷却影响</span><span class="en">Subject to One Tap cooldown</span></td><td class="lose"><span class="zh">是</span><span class="en">Yes</span></td><td class="win"><span class="zh">否</span><span class="en">No</span></td><td class="recol win"><span class="zh">否</span><span class="en">No</span></td></tr>
+                <tr><td class="rowlabel"><span class="zh">前端直接拿到</span><span class="en">Frontend gets directly</span></td><td><code>id_token</code> (JWT)</td><td><code>access_token</code><span class="zh">（不透明字符串）</span><span class="en"> (opaque string)</span></td><td class="recol"><code>code</code><span class="zh">（一次性凭证）</span><span class="en"> (one-time credential)</span></td></tr>
+                <tr><td class="rowlabel"><span class="zh">含可验证的 id_token</span><span class="en">Includes a verifiable id_token</span></td><td class="win"><span class="zh">是</span><span class="en">Yes</span></td><td class="lose"><span class="zh">否</span><span class="en">No</span></td><td class="recol win"><span class="zh">是（换取结果里含）</span><span class="en">Yes (included in the exchange result)</span></td></tr>
+                <tr><td class="rowlabel"><span class="zh">换取步骤在哪</span><span class="en">Where the exchange happens</span></td><td><span class="zh">无需换取</span><span class="en">No exchange needed</span></td><td><span class="zh">无需换取</span><span class="en">No exchange needed</span></td><td class="recol"><span class="zh">后端用 <code>client_secret</code> 换</span><span class="en">Backend, via <code>client_secret</code></span></td></tr>
+                <tr><td class="rowlabel"><span class="zh">后端校验要改</span><span class="en">Backend verification needs rewriting</span></td><td>—</td><td class="lose"><span class="zh">要重写</span><span class="en">Yes, must be rewritten</span></td><td class="recol win"><span class="zh">不用改，复用现有</span><span class="en">No, reuses existing logic</span></td></tr>
+                <tr><td class="rowlabel"><span class="zh">能否保持登录</span><span class="en">Can keep the user signed in</span></td><td class="lose"><span class="zh">否：id_token 约 1 小时过期，没有 refresh token，需自建会话维持登录</span><span class="en">No: the id_token expires in about 1 hour and there is no refresh token; you need your own session to stay signed in</span></td><td class="lose"><span class="zh">否：access_token 约 1 小时过期，浏览器端拿不到 refresh token，需自建会话</span><span class="en">No: the access_token expires in about 1 hour and the browser gets no refresh token; you need your own session</span></td><td class="recol win"><span class="zh">是：后端换取时可拿到 refresh_token，服务端可静默续期，无需用户再次授权</span><span class="en">Yes: the backend can obtain a refresh_token during the exchange and renew silently on the server, without asking the user again</span></td></tr>
+          </tbody>
+            </table>
+          </div>
+          <p class="zh muted" style="margin-top:12px">Access Token 方案会把"Google 签名担保身份"降级成"客户端自己上报的数据"，安全性下降，所以推荐采用 Authorization Code 方案。</p><p class="en muted" style="margin-top:12px">The Access Token approach downgrades “an identity Google vouches for” to “data the client self-reports” — a real drop in security — so Authorization Code is the recommended approach.</p>
+</div>
+
+<footer><span class="zh">Firebase Auth Demo · Google 登录方案分析</span><span class="en">Firebase Auth Demo · Google Login Solution Analysis</span></footer>
+
+<script>
+  const TITLES = { zh: '方案二细分：三种实现方式对比', en: 'Option 2 breakdown: comparing the three approaches' };
+  function setLang(lang) {
+    document.documentElement.lang = lang === 'en' ? 'en' : 'zh-CN';
+    document.title = TITLES[lang];
+    document.querySelectorAll('.lang-switch button').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+    try { localStorage.setItem('lang', lang); } catch (e) {}
+  }
+  document.querySelectorAll('.lang-switch button').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+  setLang(document.documentElement.lang === 'en' ? 'en' : 'zh');
+</script>
+</body>
+</html>
