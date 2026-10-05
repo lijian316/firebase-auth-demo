@@ -226,7 +226,7 @@
           <div class="competitor-url">megahitpoker.com</div>
         </div>
       </div>
-      <div class="conclusion-badge"><span class="zh">✓ 支持 Google 登录 · 采用 Firebase Auth 对接</span><span class="en">✓ Google sign-in supported · Integrated with Firebase Auth</span></div>
+      <div class="conclusion-badge"><span class="zh">✓ 采用 Firebase Auth 对接</span><span class="en">✓ Integrated with Firebase Auth</span></div>
 
       <ul class="evidence-list">
         <li class="zh">登录请求打到 <code>identitytoolkit.googleapis.com/v1/accounts:signInWithIdp</code> —— 这是 Firebase Identity Toolkit 的专属接口</li><li class="en">The sign-in request goes to <code>identitytoolkit.googleapis.com/v1/accounts:signInWithIdp</code> — an endpoint specific to Firebase Identity Toolkit</li>
@@ -253,7 +253,7 @@
           <div class="competitor-url">playwsop.com</div>
         </div>
       </div>
-      <div class="conclusion-badge alt"><span class="zh">✓ 支持 Google 登录 · 直连 Google Identity Services，未使用 Firebase</span><span class="en">✓ Google sign-in supported · Direct Google Identity Services, no Firebase</span></div>
+      <div class="conclusion-badge alt"><span class="zh">✓ 直连 Google Identity Services，未使用 Firebase</span><span class="en">✓ Direct Google Identity Services, no Firebase</span></div>
 
       <h3><span class="zh">登录交互：One Tap 自动弹出 + 按钮弹窗，两条独立入口</span><span class="en">Sign-in interaction: One Tap auto-prompt + button popup, two independent entry points</span></h3>
       <p class="zh muted">进入页面会先自动弹出 Google 原生的账号选择卡片（One Tap / FedCM），这是用 <code>google.accounts.id.prompt()</code> 实现的自动入口；页面上的"GOOGLE SIGN-IN"按钮是另一条<b>独立</b>的入口，从页面加载起就一直存在，点击后会触发传统的 OAuth 弹窗。关掉 One Tap 卡片后点按钮能弹窗，只是切换到了这条本来就写好的路径，并不是 GIS 库检测到 One Tap 被关闭后自动切换的"降级"行为——这两条入口是 WSOP 前端各自独立实现的。</p><p class="en muted">When the page loads, Google’s native account chooser card (One Tap / FedCM) pops up automatically; this is the automatic entry point implemented with <code>google.accounts.id.prompt()</code>. The “GOOGLE SIGN-IN” button on the page is a separate, <b>independent</b> entry point that exists from page load and opens a traditional OAuth popup when clicked. Clicking the button after closing the One Tap card simply uses this pre-built path; it is not a “fallback” that the GIS library switches to automatically after detecting that One Tap was dismissed. The two entry points are implemented independently in WSOP’s front end.</p>
@@ -289,7 +289,7 @@
           <div class="competitor-url">pokerist.com</div>
         </div>
       </div>
-      <div class="conclusion-badge alt"><span class="zh">✓ 支持 Google 登录 · 网页版用 Google 官方按钮，iPhone 用网页弹出，未使用 Firebase</span><span class="en">✓ Google sign-in supported · Official Google button on the web, web popup on iPhone, no Firebase</span></div>
+      <div class="conclusion-badge alt"><span class="zh">✓ 网页版用 Google 官方按钮，iPhone 用网页弹出，未使用 Firebase</span><span class="en">✓ Official Google button on the web, web popup on iPhone, no Firebase</span></div>
 
       <h3><span class="zh">网页版：渲染 Google 官方登录按钮</span><span class="en">Web version: renders the official Google sign-in button</span></h3>
       <div class="shot-grid" style="grid-template-columns: minmax(0, 1fr);">
