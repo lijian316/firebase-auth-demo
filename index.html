@@ -271,32 +271,6 @@
         </div>
       </div>
 
-      <h3><span class="zh">证据：解码登录后拿到的 idToken</span><span class="en">Evidence: decoding the idToken received after sign-in</span></h3>
-      <p class="zh muted">抓包拿到登录后的 idToken，直接用 Base64 解码（无需私钥即可解码，只是不能伪造签名），个人信息已脱敏：</p><p class="en muted">We captured the idToken after sign-in and decoded it with plain Base64 (no private key needed to decode — the signature just can’t be forged). Personal details are redacted:</p>
-      <div class="jwt-block"><span class="c">// Header</span>
-{ <span class="k">"alg"</span>: <span class="v">"RS256"</span>, <span class="k">"kid"</span>: <span class="v">"f10f8740..."</span>, <span class="k">"typ"</span>: <span class="v">"JWT"</span> }
-
-<span class="c">// Payload</span>
-{
-  <span class="k">"iss"</span>: <span class="v">"https://accounts.google.com"</span>,
-  <span class="k">"azp"</span>: <span class="v">"674187459...apps.googleusercontent.com"</span>,
-  <span class="k">"aud"</span>: <span class="v">"674187459...apps.googleusercontent.com"</span>,
-  <span class="k">"sub"</span>: <span class="v">"1041340566***"</span>,
-  <span class="k">"email"</span>: <span class="v">"z***@gmail.com"</span>,
-  <span class="k">"email_verified"</span>: <span class="v">true</span>,
-  <span class="k">"iat"</span>: <span class="v">1790735330</span>,
-  <span class="k">"exp"</span>: <span class="v">1790738930</span> <span class="c zh">// 有效期 1 小时</span><span class="c en">// valid for 1 hour</span>
-}</div>
-
-      <div class="compare-note">
-        ⚠️ <div class="zh"><b>和 MegaHitPoker 的关键区别：</b>这里的 <code>iss</code> 是 <code>accounts.google.com</code>（Google 自己），<code>aud</code> 是原始 Google OAuth Client ID；而 Firebase 签发的 idToken，<code>iss</code> 会是 <code>securetoken.google.com/&lt;firebase项目ID&gt;</code>，并且带一个专属的 <code>firebase</code> 字段。这说明 WSOP 拿到的是 <b>Google 原生 idToken</b>，没有经过 Firebase 转手重新签发。</div><div class="en"><b>Key difference from Mega Hit Poker:</b> here <code>iss</code> is <code>accounts.google.com</code> (Google itself) and <code>aud</code> is a raw Google OAuth Client ID; an idToken issued by Firebase would have <code>iss</code> set to <code>securetoken.google.com/&lt;firebase-project-id&gt;</code> plus a dedicated <code>firebase</code> claim. This shows WSOP receives the <b>native Google idToken</b>, without Firebase re-issuing it.</div>
-      </div>
-
-      <ul class="evidence-list">
-        <li class="zh">登录相关请求类型是 <code>fedcm</code> / <code>web-identity</code> —— 这是浏览器原生 FedCM API 的请求，属于 Google Identity Services（不是 Firebase SDK 的请求特征）</li><li class="en">The sign-in related requests are of type <code>fedcm</code> / <code>web-identity</code> — these come from the browser’s native FedCM API and are part of Google Identity Services (not a signature of the Firebase SDK)</li>
-        <li class="zh">没有出现任何 <code>__/auth/handler</code> 或 <code>identitytoolkit.googleapis.com</code> 相关请求</li><li class="en">No <code>__/auth/handler</code> or <code>identitytoolkit.googleapis.com</code> requests appear at all</li>
-        <li class="zh">推测 WSOP 自己的后端拿到这个 Google idToken 后，自行验签、自行维护登录会话（可能转换成自己的 session token 或 cookie），登录状态维持逻辑是自研的，不依赖 Firebase</li><li class="en">We infer that WSOP’s own backend verifies this Google idToken itself and maintains the login session on its own (possibly exchanging it for its own session token or cookie); the session-keeping logic is self-built and does not depend on Firebase</li>
-      </ul>
     </div>
 
     <div class="competitor-card">
@@ -307,9 +281,6 @@
         </div>
       </div>
       <div class="conclusion-badge no"><span class="zh">✕ 不支持 Google 登录</span><span class="en">✕ Google sign-in not supported</span></div>
-
-      <h3><span class="zh">登录入口只有两个选项</span><span class="en">Only two sign-in options</span></h3>
-      <p class="zh muted">登录页只提供「Login with Zynga Poker」（自家账号体系）和「Login with Facebook」两个入口，没有 Google 登录选项，也没有 Apple 登录选项。</p><p class="en muted">The sign-in page offers just “Login with Zynga Poker” (its own account system) and “Login with Facebook”. There is no Google option and no Apple option.</p>
     </div>
 
     <div class="competitor-card">
