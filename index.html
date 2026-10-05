@@ -322,13 +322,55 @@
       <div class="conclusion-badge alt"><span class="zh">✓ 支持 Google 登录 · 网页版用 Google 官方按钮，iPhone 用网页弹出，未使用 Firebase</span><span class="en">✓ Google sign-in supported · Official Google button on the web, web popup on iPhone, no Firebase</span></div>
 
       <h3><span class="zh">网页版：渲染 Google 官方登录按钮</span><span class="en">Web version: renders the official Google sign-in button</span></h3>
-      <p class="zh muted">登录页上的 Google 按钮不是网站自己画的：它是个性化样式（「用 zane 的身份登录」+ 邮箱 + G 图标），并且 DevTools 的 Application 面板里能看到一个来自 <code>accounts.google.com</code> 的第三方 iframe。这是 Google Identity Services 的 <code>renderButton()</code> 的特征，拿到的是 ID Token，对应对比表里的方案 1。</p><p class="en muted">The Google button on the sign-in page is not drawn by the site itself: it uses the personalized style (“Sign in as zane” + email + G logo), and the DevTools Application panel shows a third-party iframe from <code>accounts.google.com</code>. These are signatures of Google Identity Services’ <code>renderButton()</code>, which returns an ID Token (Approach 1 in the comparison table).</p>
+      <p class="zh muted">登录页上的 Google 按钮不是网站自己画的，而是由 Google 的脚本渲染出来的官方按钮。判断依据有两条：</p><p class="en muted">The Google button on the sign-in page is not drawn by the site itself; it is an official button rendered by Google’s script. Two things give it away:</p>
+      <ul class="evidence-list">
+        <li class="zh">样式是<b>个性化</b>的：「用 zane 的身份登录」+ 邮箱 + G 图标。这是 Google 根据浏览器里已登录的 Google 账号自动生成的，网站自己拿不到这些信息，没法自己画</li><li class="en">The style is <b>personalized</b>: “Sign in as zane” + email + G logo. Google generates it from the Google account signed in to the browser; the site has no access to that information and cannot draw it itself</li>
+        <li class="zh">DevTools 的 Application 面板里，这个按钮对应一个来自 <code>accounts.google.com</code> 的<b>第三方 iframe</b>（Is third-party: Yes）</li><li class="en">In the DevTools Application panel, the button corresponds to a <b>third-party iframe</b> from <code>accounts.google.com</code> (Is third-party: Yes)</li>
+      </ul>
       <div class="shot-grid" style="grid-template-columns: minmax(0, 1fr);">
         <div class="shot">
           <img src="assets/competitor-pokerist-web.webp" data-alt-zh="Pokerist 网页版登录页，Google 官方个性化按钮" data-alt-en="Pokerist web sign-in page with the personalized official Google button" alt="">
           <div class="shot-cap"><span class="zh">网页版登录页：Apple / Facebook 是自绘按钮，Google 是官方按钮（右侧 DevTools 显示其 iframe 来自 accounts.google.com）</span><span class="en">Web sign-in page: Apple / Facebook are custom buttons while Google is the official button (DevTools on the right shows its iframe from accounts.google.com)</span></div>
         </div>
       </div>
+
+      <h3><span class="zh">实现方式：<code>renderButton()</code></span><span class="en">Implementation: <code>renderButton()</code></span></h3>
+      <ul class="evidence-list">
+        <li class="zh">页面引入 Google 的脚本 <code>https://accounts.google.com/gsi/client</code></li><li class="en">The page loads Google’s script <code>https://accounts.google.com/gsi/client</code></li>
+        <li class="zh"><code>google.accounts.id.initialize()</code> 传入 <code>client_id</code> 和回调函数</li><li class="en"><code>google.accounts.id.initialize()</code> is given the <code>client_id</code> and a callback</li>
+        <li class="zh"><code>google.accounts.id.renderButton()</code> 在指定容器里放一个按钮：Google 会在容器里插入上面那个 iframe。样式只能通过参数调整（<code>theme</code>、<code>size</code>、<code>text</code>、<code>shape</code>、<code>width</code>、<code>locale</code> 等），不能自己改按钮内部的样子</li><li class="en"><code>google.accounts.id.renderButton()</code> places a button in the given container: Google inserts the iframe above into it. The look can only be tuned through parameters (<code>theme</code>, <code>size</code>, <code>text</code>, <code>shape</code>, <code>width</code>, <code>locale</code>, etc.); the inside of the button cannot be restyled</li>
+        <li class="zh">用户点击后 Google 弹出授权窗口，授权完成会调用回调，<code>response.credential</code> 就是 <b>ID Token</b>（JWT），页面再把它发给自己的后端验签</li><li class="en">After the user clicks, Google opens the authorization window and then calls the callback; <code>response.credential</code> is the <b>ID Token</b> (JWT), which the page sends to its own backend for verification</li>
+      </ul>
+      <div class="jwt-block"><span class="c zh">// 页面里放一个容器</span><span class="c en">// put a container in the page</span>
+&lt;<span class="k">script</span> src=<span class="v">"https://accounts.google.com/gsi/client"</span> async&gt;&lt;/<span class="k">script</span>&gt;
+&lt;<span class="k">div</span> id=<span class="v">"gbtn"</span>&gt;&lt;/<span class="k">div</span>&gt;
+
+google.accounts.id.initialize({
+  client_id: <span class="v">'YOUR_CLIENT_ID.apps.googleusercontent.com'</span>,
+  callback: (resp) => {
+    <span class="c zh">// resp.credential 就是 ID Token（JWT），发给自己的后端验签</span><span class="c en">// resp.credential is the ID Token (JWT); send it to your backend for verification</span>
+    sendToBackend(resp.credential);
+  },
+});
+
+google.accounts.id.renderButton(document.getElementById(<span class="v">'gbtn'</span>), {
+  theme: <span class="v">'outline'</span>, size: <span class="v">'large'</span>, text: <span class="v">'signin_with'</span>, width: <span class="v">320</span>,
+});
+
+<span class="c zh">// 注意：这里不调用 google.accounts.id.prompt()，所以不会有 One Tap 卡片</span><span class="c en">// note: google.accounts.id.prompt() is NOT called, so there is no One Tap card</span></div>
+
+      <h3><span class="zh">走的是方案 1，但不会有冷却时间</span><span class="en">It is Approach 1, but without the cooldown</span></h3>
+      <p class="zh muted">拿到的是 ID Token，所以本质上仍是对比表里的<b>方案 1（ID Token）</b>，后端校验逻辑也不用改。区别在于入口：方案 1 常见的写法是 <code>prompt()</code>（自动弹出 One Tap 卡片），而这里用的是<b>常驻的按钮</b>。</p><p class="en muted">It returns an ID Token, so it is still <b>Approach 1 (ID Token)</b> in the comparison table, and the backend verification does not change. The difference is the entry point: the common way to do Approach 1 is <code>prompt()</code> (the automatic One Tap card), while this uses a <b>permanent button</b>.</p>
+      <p class="zh muted">One Tap 的指数级冷却（关闭一次后 2 小时、再关 1 天、1 周、4 周内不再弹出）针对的是 <code>prompt()</code> 弹出的卡片。按钮是常驻在页面上的，用户任何时候点都能弹出授权窗口，<b>不受冷却影响</b>。从截图看，这个页面也没有自动弹出的 One Tap 卡片。所以"方案 1 受冷却影响"只在使用 <code>prompt()</code> 时成立；只用 <code>renderButton()</code> 就能避开冷却，同时保持 ID Token 流程不变。</p><p class="en muted">The exponential One Tap cooldown (no re-prompt for 2 hours after the first dismissal, then 1 day, 1 week, 4 weeks) applies to the card shown by <code>prompt()</code>. The button stays on the page, so the user can click it at any time to open the authorization window, and it is <b>not affected by the cooldown</b>. The screenshot also shows no automatically popping One Tap card on this page. So “Approach 1 is subject to the cooldown” only holds when <code>prompt()</code> is used; using only <code>renderButton()</code> avoids the cooldown while keeping the ID Token flow unchanged.</p>
+
+      <h3><span class="zh">能否在 Unity 里渲染这个按钮？</span><span class="en">Can this button be rendered inside Unity?</span></h3>
+      <p class="zh muted"><b>不能直接在 Unity 画面里渲染。</b>这个按钮是 Google 脚本往网页 DOM 里插入的 iframe，Unity 的画面画在 <code>&lt;canvas&gt;</code> 里，iframe 没法画进 Unity UI。分平台来看：</p><p class="en muted"><b>Not directly inside the Unity view.</b> The button is an iframe that Google’s script inserts into the web page DOM, while Unity draws into a <code>&lt;canvas&gt;</code>; an iframe cannot be drawn into Unity UI. By platform:</p>
+      <ul class="evidence-list">
+        <li class="zh"><b>Unity WebGL</b>：可以用 DOM 叠加的办法——在 WebGL 模板页里放一个容器，用 CSS 定位叠在 canvas 上，通过 <code>.jslib</code> 调用 <code>renderButton()</code>，回调里用 <code>SendMessage</code> 把 <code>credential</code> 传回 C#。代价：按钮只能用 Google 提供的样式参数，位置、显示和隐藏要自己和 Unity 界面保持同步</li><li class="en"><b>Unity WebGL</b>: use a DOM overlay — put a container in the WebGL template page, position it over the canvas with CSS, call <code>renderButton()</code> from a <code>.jslib</code>, and pass the <code>credential</code> back to C# with <code>SendMessage</code> in the callback. The cost: the button can only use Google’s style parameters, and its position and visibility must be kept in sync with the Unity UI yourself</li>
+        <li class="zh"><b>Unity iOS / Android 原生包</b>：没有网页 DOM，无法渲染这个按钮。Android 用原生登录；iOS 用 Google 的 iOS SDK 或系统的网页授权会话（正是下面 Pokerist iPhone 的做法）。想把网页按钮塞进 App 内嵌 WebView 里渲染并不可靠，Google 对内嵌 WebView 里的登录有限制，容易被拦，不建议（需实测）</li><li class="en"><b>Unity iOS / Android native builds</b>: there is no web DOM, so the button cannot be rendered. Android uses native sign-in; iOS uses Google’s iOS SDK or the system web authentication session (exactly what Pokerist does on iPhone below). Rendering the web button inside an in-app WebView is not reliable: Google restricts sign-in in embedded WebViews and is likely to block it, so it is not recommended (needs testing)</li>
+        <li class="zh"><b>想保留 Unity 自绘的按钮样式</b>：就不能用 <code>renderButton()</code>（它的外观由 Google 决定）。自绘按钮点击后要么调 <code>prompt()</code>（会回到冷却问题），要么改用方案 3 的 <code>initCodeClient()</code></li><li class="en"><b>To keep a Unity-drawn button</b>: <code>renderButton()</code> cannot be used (Google decides its look). A custom button would have to call <code>prompt()</code> on click (bringing the cooldown back) or switch to Approach 3’s <code>initCodeClient()</code></li>
+      </ul>
+      <p class="zh muted">以上 Unity 部分是按 GIS 和 Unity WebGL 的机制推断的，没有在 Unity 项目里实际验证过。</p><p class="en muted">The Unity part above is inferred from how GIS and Unity WebGL work and has not been verified in an actual Unity project.</p>
 
       <h3><span class="zh">iPhone App：走网页弹出</span><span class="en">iPhone app: web popup</span></h3>
       <p class="zh muted">登录页提供 Apple / Facebook / Google 三个入口，并标出「上次登录方式」。点击 Google 后，iOS 弹出系统提示「“Texas Poker” Wants to Use “accounts.google.com” to Sign In」，随后在系统网页弹层里完成 Google 授权，也就是<b>走网页弹出</b>，不是网页版那种官方按钮，也不是 One Tap。</p><p class="en muted">The sign-in screen offers Apple / Facebook / Google and marks the “last used” method. Tapping Google makes iOS show the system prompt “Texas Poker” Wants to Use “accounts.google.com” to Sign In, and the Google authorization then happens in a system web sheet — i.e. a <b>web popup</b>, not the official button used on the web, and not One Tap.</p>
