@@ -186,7 +186,7 @@
   </div>
 
   <div class="flow" id="flow">
-    <h3><span class="zh">前端保持登录的完整流程 1</span><span class="en">Keeping the user signed in: complete flow 1</span></h3>
+    <h3><span class="zh">保持登录方案 1：缓存后台新签发的 token</span><span class="en">Session persistence option 1: cache the newly issued backend token</span></h3>
     <p class="zh muted">前端启动时先看本地有没有后端签发的会话令牌：有就直接用它登录，没有（或被拒绝）才弹出 Google 授权。</p><p class="en muted">On startup the front end first checks for a session token issued by the backend: if there is one it logs in with it directly; only when there is none (or it is rejected) does it open the Google authorization popup.</p>
     <div class="svgwrap">
 <svg class="svgfc" viewBox="0 0 960 700" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Login persistence flowchart">
@@ -246,7 +246,7 @@
   </div>
 
   <div class="flow" id="flow2">
-    <h3><span class="zh">前端保持登录的完整流程 2</span><span class="en">Keeping the user signed in: complete flow 2</span></h3>
+    <h3><span class="zh">保持登录方案 2：缓存后台返回的 ID Token</span><span class="en">Session persistence option 2: cache the id_token returned by the backend</span></h3>
     <p class="zh muted">后端用 code 向 Google 换出 id_token 后，直接返回给前端；前端直接保存这个 id_token，下次带着它登录。id_token 约 1 小时过期，过期后需要重新授权。</p><p class="en muted">After exchanging the code with Google for an id_token, the backend returns it directly to the front end, which stores that id_token and logs in with it next time. The id_token expires after about 1 hour, after which the user has to authorize again.</p>
     <div class="svgwrap">
 <svg class="svgfc" viewBox="0 0 960 700" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Login persistence flowchart">
@@ -300,7 +300,7 @@
   </div>
 
   <div class="flow" id="flow3">
-    <h3><span class="zh">前端保持登录的完整流程 3</span><span class="en">Keeping the user signed in: complete flow 3</span></h3>
+    <h3><span class="zh">保持登录方案 3：缓存现有的 gcs_token</span><span class="en">Session persistence option 3: cache the existing gcs_token</span></h3>
     <p class="zh muted">登录成功后，前端直接保存并使用现有的 gcs_token；下次启动直接拿它登录，不再依赖 Google 的令牌。令牌失效时才重新走 Google 授权。</p><p class="en muted">After a successful login the front end stores and reuses the existing gcs_token; on the next start it logs in with that token directly, no longer depending on Google’s tokens. Google authorization is only repeated when the token is no longer valid.</p>
     <div class="svgwrap">
 <svg class="svgfc" viewBox="0 0 960 610" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Login persistence flowchart">
