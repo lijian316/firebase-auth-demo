@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>第三方登录接入方案分析</title>
+<script>(function(){var l=null;try{l=localStorage.getItem('lang')}catch(e){}if(!l)l=(navigator.language||'').toLowerCase().indexOf('zh')===0?'zh':'en';document.documentElement.lang=l==='en'?'en':'zh-CN';})();</script>
 <style>
   :root {
     --bg: #f5f6f8;
@@ -36,7 +37,7 @@
     background: var(--surface); border-bottom: 1px solid var(--border);
     padding: 40px 24px 28px;
   }
-  .hero-inner { max-width: 880px; margin: 0 auto; }
+  .hero-inner { max-width: 880px; margin: 0 auto; position: relative; }
   .hero-title { font-size: 24px; font-weight: 700; }
   .hero-sub { color: var(--muted); font-size: 13px; margin-top: 6px; }
 
@@ -169,18 +170,25 @@
   @media (max-width: 640px) {
     .shot-grid, .option-grid { grid-template-columns: 1fr; }
   }
+
+  html[lang="zh-CN"] .en { display: none !important; }
+  html[lang="en"] .zh { display: none !important; }
+  .lang-switch { position: absolute; top: -18px; right: 0; display: flex; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
+  .lang-switch button { font: inherit; font-size: 12px; font-weight: 600; padding: 5px 12px; border: none; background: transparent; color: var(--muted); cursor: pointer; }
+  .lang-switch button.active { background: var(--accent); color: #fff; }
 </style>
 </head>
 <body>
 
 <div class="hero">
   <div class="hero-inner">
-    <div class="hero-title">第三方登录接入方案分析</div>
-    <div class="hero-sub">Google / Facebook / Apple 登录 · WebGL &amp; iOS 场景</div>
+    <div class="lang-switch"><button type="button" data-lang="zh">中文</button><button type="button" data-lang="en">EN</button></div>
+    <div class="hero-title"><span class="zh">第三方登录接入方案分析</span><span class="en">Third-Party Login Integration Analysis</span></div>
+    <div class="hero-sub"><span class="zh">Google / Facebook / Apple 登录 · WebGL &amp; iOS 场景</span><span class="en">Google / Facebook / Apple Sign-In · WebGL &amp; iOS</span></div>
     <nav class="toc">
-      <a href="#background">1. 背景说明</a>
-      <a href="#competitors">2. 竞品分析</a>
-      <a href="#recommendation">3. 推荐方案</a>
+      <a href="#background"><span class="zh">1. 背景说明</span><span class="en">1. Background</span></a>
+      <a href="#competitors"><span class="zh">2. 竞品分析</span><span class="en">2. Competitor Analysis</span></a>
+      <a href="#recommendation"><span class="zh">3. 推荐方案</span><span class="en">3. Recommendation</span></a>
     </nav>
   </div>
 </div>
@@ -188,57 +196,57 @@
 <div class="main">
 
   <section id="background">
-    <h2><span class="section-num">1</span>背景说明</h2>
-    <p>第三方登录（Google / Facebook / Apple）在不同平台上的原生支持程度不同，这是本次调研和方案选型的出发点：</p>
+    <h2><span class="section-num">1</span><span class="zh">背景说明</span><span class="en">Background</span></h2>
+    <p class="zh">第三方登录（Google / Facebook / Apple）在不同平台上的原生支持程度不同，这是本次调研和方案选型的出发点：</p><p class="en">Native support for third-party sign-in (Google / Facebook / Apple) differs by platform, which is the starting point for this research and solution selection:</p>
     <table class="ptable">
-      <tr><th>平台</th><th>原生 Google 登录支持</th><th>说明</th></tr>
+      <tr><th><span class="zh">平台</span><span class="en">Platform</span></th><th><span class="zh">原生 Google 登录支持</span><span class="en">Native Google Sign-In</span></th><th><span class="zh">说明</span><span class="en">Notes</span></th></tr>
       <tr>
         <td>Android</td>
-        <td><span class="tag ok">原生支持</span></td>
-        <td>可直接调用系统原生的 Google 登录方式，无需额外方案</td>
+        <td><span class="tag ok"><span class="zh">原生支持</span><span class="en">Native support</span></span></td>
+        <td><span class="zh">可直接调用系统原生的 Google 登录方式，无需额外方案</span><span class="en">Can call the system’s native Google Sign-In directly; no extra solution needed</span></td>
       </tr>
       <tr>
-        <td>WebGL（浏览器）</td>
-        <td><span class="tag warn">不支持原生</span></td>
-        <td>没有"原生"这个概念，必须通过 JS 方式实现登录</td>
+        <td><span class="zh">WebGL（浏览器）</span><span class="en">WebGL (browser)</span></td>
+        <td><span class="tag warn"><span class="zh">不支持原生</span><span class="en">No native support</span></span></td>
+        <td><span class="zh">没有"原生"这个概念，必须通过 JS 方式实现登录</span><span class="en">There is no “native” layer; sign-in must be implemented in JavaScript</span></td>
       </tr>
       <tr>
         <td>iOS</td>
-        <td><span class="tag warn">不支持原生</span></td>
-        <td>没有对应的原生调用方式，同样需要通过 JS 方式实现</td>
+        <td><span class="tag warn"><span class="zh">不支持原生</span><span class="en">No native support</span></span></td>
+        <td><span class="zh">没有对应的原生调用方式，同样需要通过 JS 方式实现</span><span class="en">No equivalent native call is available; it also has to go through a JavaScript approach</span></td>
       </tr>
     </table>
-    <p class="muted">因此本次方案调研聚焦在 <b>WebGL 和 iOS</b> 这两个需要额外接入方式的场景，Android 不在本次范围内。</p>
+    <p class="zh muted">因此本次方案调研聚焦在 <b>WebGL 和 iOS</b> 这两个需要额外接入方式的场景，Android 不在本次范围内。</p><p class="en muted">So this research focuses on <b>WebGL and iOS</b>, the two scenarios that need an additional integration approach. Android is out of scope.</p>
   </section>
 
   <section id="competitors">
-    <h2><span class="section-num">2</span>竞品 Google 登录分析</h2>
-    <p class="muted">持续补充中：针对有 Google 登录功能的竞品游戏，抓包分析其具体采用的技术方案。</p>
+    <h2><span class="section-num">2</span><span class="zh">竞品 Google 登录分析</span><span class="en">Competitor Google Sign-In Analysis</span></h2>
+    <p class="zh muted">持续补充中：针对有 Google 登录功能的竞品游戏，抓包分析其具体采用的技术方案。</p><p class="en muted">Work in progress: for competitor games that offer Google sign-in, we capture network traffic to identify the technical approach each one uses.</p>
 
     <div class="competitor-card">
       <div class="competitor-head">
         <div>
-          <div class="competitor-name">竞品 1 · Mega Hit Poker</div>
+          <div class="competitor-name"><span class="zh">竞品 1 · Mega Hit Poker</span><span class="en">Competitor 1 · Mega Hit Poker</span></div>
           <div class="competitor-url">megahitpoker.com</div>
         </div>
       </div>
-      <div class="conclusion-badge">✓ 支持 Google 登录 · 采用 Firebase Auth 对接</div>
+      <div class="conclusion-badge"><span class="zh">✓ 支持 Google 登录 · 采用 Firebase Auth 对接</span><span class="en">✓ Google sign-in supported · Integrated with Firebase Auth</span></div>
 
-      <h3>证据（浏览器 Network 抓包）</h3>
+      <h3><span class="zh">证据（浏览器 Network 抓包）</span><span class="en">Evidence (browser Network capture)</span></h3>
       <ul class="evidence-list">
-        <li>登录请求打到 <code>identitytoolkit.googleapis.com/v1/accounts:signInWithIdp</code> —— 这是 Firebase Identity Toolkit 的专属接口</li>
-        <li>请求里的 <code>requestUri</code> 指向 <code>https://mega-hit-poker.firebaseapp.com/__/auth/handler</code> —— 这个 <code>__/auth/handler</code> 路径是 Firebase Auth 自动托管的登录中转页，是 Firebase 的特征标识</li>
-        <li>返回结果里带有 <code>idToken</code>、<code>refreshToken</code>、<code>oauthAccessToken</code>、<code>oauthIdToken</code> 等字段，字段命名和结构与本项目 <a href="demo.html">Firebase Auth Demo</a> 实测结果完全一致</li>
+        <li class="zh">登录请求打到 <code>identitytoolkit.googleapis.com/v1/accounts:signInWithIdp</code> —— 这是 Firebase Identity Toolkit 的专属接口</li><li class="en">The sign-in request goes to <code>identitytoolkit.googleapis.com/v1/accounts:signInWithIdp</code> — an endpoint specific to Firebase Identity Toolkit</li>
+        <li class="zh">请求里的 <code>requestUri</code> 指向 <code>https://mega-hit-poker.firebaseapp.com/__/auth/handler</code> —— 这个 <code>__/auth/handler</code> 路径是 Firebase Auth 自动托管的登录中转页，是 Firebase 的特征标识</li><li class="en">The <code>requestUri</code> in the request points to <code>https://mega-hit-poker.firebaseapp.com/__/auth/handler</code> — the <code>__/auth/handler</code> path is the sign-in relay page automatically hosted by Firebase Auth, a telltale sign of Firebase</li>
+        <li class="zh">返回结果里带有 <code>idToken</code>、<code>refreshToken</code>、<code>oauthAccessToken</code>、<code>oauthIdToken</code> 等字段，字段命名和结构与本项目 <a href="demo.html">Firebase Auth Demo</a> 实测结果完全一致</li><li class="en">The response contains fields such as <code>idToken</code>, <code>refreshToken</code>, <code>oauthAccessToken</code> and <code>oauthIdToken</code>; field names and structure match exactly what we observed in this project’s <a href="demo.html">Firebase Auth Demo</a></li>
       </ul>
 
       <div class="shot-grid">
         <div class="shot">
-          <img src="assets/competitor-megahitpoker-response.webp" alt="MegaHitPoker signInWithIdp 响应">
-          <div class="shot-cap">signInWithIdp 接口返回内容，可见 idToken / refreshToken</div>
+          <img src="assets/competitor-megahitpoker-response.webp" data-alt-zh="MegaHitPoker signInWithIdp 响应" data-alt-en="Mega Hit Poker signInWithIdp response" alt="">
+          <div class="shot-cap"><span class="zh">signInWithIdp 接口返回内容，可见 idToken / refreshToken</span><span class="en">Response of the signInWithIdp call; idToken / refreshToken are visible</span></div>
         </div>
         <div class="shot">
-          <img src="assets/competitor-megahitpoker-payload.webp" alt="MegaHitPoker signInWithIdp 请求参数">
-          <div class="shot-cap">请求参数中的 requestUri 指向 firebaseapp.com 的 auth handler</div>
+          <img src="assets/competitor-megahitpoker-payload.webp" data-alt-zh="MegaHitPoker signInWithIdp 请求参数" data-alt-en="Mega Hit Poker signInWithIdp request payload" alt="">
+          <div class="shot-cap"><span class="zh">请求参数中的 requestUri 指向 firebaseapp.com 的 auth handler</span><span class="en">In the request payload, requestUri points to the auth handler on firebaseapp.com</span></div>
         </div>
       </div>
     </div>
@@ -246,29 +254,29 @@
     <div class="competitor-card">
       <div class="competitor-head">
         <div>
-          <div class="competitor-name">竞品 2 · WSOP（World Series of Poker）</div>
+          <div class="competitor-name"><span class="zh">竞品 2 · WSOP（World Series of Poker）</span><span class="en">Competitor 2 · WSOP (World Series of Poker)</span></div>
           <div class="competitor-url">playwsop.com</div>
         </div>
       </div>
-      <div class="conclusion-badge alt">✓ 支持 Google 登录 · 直连 Google Identity Services，未使用 Firebase</div>
+      <div class="conclusion-badge alt"><span class="zh">✓ 支持 Google 登录 · 直连 Google Identity Services，未使用 Firebase</span><span class="en">✓ Google sign-in supported · Direct Google Identity Services, no Firebase</span></div>
 
-      <h3>登录交互：One Tap 自动弹出 + 按钮弹窗，两条独立入口</h3>
-      <p class="muted">进入页面会先自动弹出 Google 原生的账号选择卡片（One Tap / FedCM），这是用 <code>google.accounts.id.prompt()</code> 实现的自动入口；页面上的"GOOGLE SIGN-IN"按钮是另一条<b>独立</b>的入口，从页面加载起就一直存在，点击后会触发传统的 OAuth 弹窗。关掉 One Tap 卡片后点按钮能弹窗，只是切换到了这条本来就写好的路径，并不是 GIS 库检测到 One Tap 被关闭后自动切换的"降级"行为——这两条入口是 WSOP 前端各自独立实现的。</p>
-      <p class="muted" style="margin-top: 10px;">另外 Google One Tap 本身确实有真实的冷却机制：用户关闭/多次忽略后，Google 会在一段时间内不再自动弹出 One Tap（这个状态由 Google 侧控制），但它只影响"下次是否自动弹出"，跟按钮点击触发弹窗这件事没有关系。</p>
+      <h3><span class="zh">登录交互：One Tap 自动弹出 + 按钮弹窗，两条独立入口</span><span class="en">Sign-in interaction: One Tap auto-prompt + button popup, two independent entry points</span></h3>
+      <p class="zh muted">进入页面会先自动弹出 Google 原生的账号选择卡片（One Tap / FedCM），这是用 <code>google.accounts.id.prompt()</code> 实现的自动入口；页面上的"GOOGLE SIGN-IN"按钮是另一条<b>独立</b>的入口，从页面加载起就一直存在，点击后会触发传统的 OAuth 弹窗。关掉 One Tap 卡片后点按钮能弹窗，只是切换到了这条本来就写好的路径，并不是 GIS 库检测到 One Tap 被关闭后自动切换的"降级"行为——这两条入口是 WSOP 前端各自独立实现的。</p><p class="en muted">When the page loads, Google’s native account chooser card (One Tap / FedCM) pops up automatically; this is the automatic entry point implemented with <code>google.accounts.id.prompt()</code>. The “GOOGLE SIGN-IN” button on the page is a separate, <b>independent</b> entry point that exists from page load and opens a traditional OAuth popup when clicked. Clicking the button after closing the One Tap card simply uses this pre-built path; it is not a “fallback” that the GIS library switches to automatically after detecting that One Tap was dismissed. The two entry points are implemented independently in WSOP’s front end.</p>
+      <p class="zh muted">另外 Google One Tap 本身确实有真实的冷却机制：用户关闭/多次忽略后，Google 会在一段时间内不再自动弹出 One Tap（这个状态由 Google 侧控制），但它只影响"下次是否自动弹出"，跟按钮点击触发弹窗这件事没有关系。</p><p class="en muted">In addition, Google One Tap does have a real cooldown mechanism: after the user dismisses or repeatedly ignores it, Google stops showing One Tap automatically for a while (this state is controlled on Google’s side). It only affects “whether it appears automatically next time” and has nothing to do with the button opening a popup.</p>
 
       <div class="shot-grid">
         <div class="shot">
-          <img src="assets/competitor-wsop-onetap.webp" alt="WSOP One Tap 自动弹出的账号选择卡片">
-          <div class="shot-cap">页面自动弹出的 One Tap 账号选择卡片</div>
+          <img src="assets/competitor-wsop-onetap.webp" data-alt-zh="WSOP One Tap 自动弹出的账号选择卡片" data-alt-en="WSOP One Tap account chooser card shown automatically" alt="">
+          <div class="shot-cap"><span class="zh">页面自动弹出的 One Tap 账号选择卡片</span><span class="en">One Tap account chooser card shown automatically on page load</span></div>
         </div>
         <div class="shot">
-          <img src="assets/competitor-wsop-popup.webp" alt="WSOP 关闭 One Tap 后改用的弹窗登录">
-          <div class="shot-cap">关闭 One Tap 后，点击按钮改用的传统 OAuth 弹窗</div>
+          <img src="assets/competitor-wsop-popup.webp" data-alt-zh="WSOP 关闭 One Tap 后改用的弹窗登录" data-alt-en="WSOP OAuth popup used after closing One Tap" alt="">
+          <div class="shot-cap"><span class="zh">关闭 One Tap 后，点击按钮改用的传统 OAuth 弹窗</span><span class="en">Traditional OAuth popup used when clicking the button after closing One Tap</span></div>
         </div>
       </div>
 
-      <h3>证据：解码登录后拿到的 idToken</h3>
-      <p class="muted">抓包拿到登录后的 idToken，直接用 Base64 解码（无需私钥即可解码，只是不能伪造签名），个人信息已脱敏：</p>
+      <h3><span class="zh">证据：解码登录后拿到的 idToken</span><span class="en">Evidence: decoding the idToken received after sign-in</span></h3>
+      <p class="zh muted">抓包拿到登录后的 idToken，直接用 Base64 解码（无需私钥即可解码，只是不能伪造签名），个人信息已脱敏：</p><p class="en muted">We captured the idToken after sign-in and decoded it with plain Base64 (no private key needed to decode — the signature just can’t be forged). Personal details are redacted:</p>
       <div class="jwt-block"><span class="c">// Header</span>
 { <span class="k">"alg"</span>: <span class="v">"RS256"</span>, <span class="k">"kid"</span>: <span class="v">"f10f8740..."</span>, <span class="k">"typ"</span>: <span class="v">"JWT"</span> }
 
@@ -281,69 +289,69 @@
   <span class="k">"email"</span>: <span class="v">"z***@gmail.com"</span>,
   <span class="k">"email_verified"</span>: <span class="v">true</span>,
   <span class="k">"iat"</span>: <span class="v">1790735330</span>,
-  <span class="k">"exp"</span>: <span class="v">1790738930</span> <span class="c">// 有效期 1 小时</span>
+  <span class="k">"exp"</span>: <span class="v">1790738930</span> <span class="c zh">// 有效期 1 小时</span><span class="c en">// valid for 1 hour</span>
 }</div>
 
       <div class="compare-note">
-        ⚠️ <div><b>和 MegaHitPoker 的关键区别：</b>这里的 <code>iss</code> 是 <code>accounts.google.com</code>（Google 自己），<code>aud</code> 是原始 Google OAuth Client ID；而 Firebase 签发的 idToken，<code>iss</code> 会是 <code>securetoken.google.com/&lt;firebase项目ID&gt;</code>，并且带一个专属的 <code>firebase</code> 字段。这说明 WSOP 拿到的是 <b>Google 原生 idToken</b>，没有经过 Firebase 转手重新签发。</div>
+        ⚠️ <div class="zh"><b>和 MegaHitPoker 的关键区别：</b>这里的 <code>iss</code> 是 <code>accounts.google.com</code>（Google 自己），<code>aud</code> 是原始 Google OAuth Client ID；而 Firebase 签发的 idToken，<code>iss</code> 会是 <code>securetoken.google.com/&lt;firebase项目ID&gt;</code>，并且带一个专属的 <code>firebase</code> 字段。这说明 WSOP 拿到的是 <b>Google 原生 idToken</b>，没有经过 Firebase 转手重新签发。</div><div class="en"><b>Key difference from Mega Hit Poker:</b> here <code>iss</code> is <code>accounts.google.com</code> (Google itself) and <code>aud</code> is a raw Google OAuth Client ID; an idToken issued by Firebase would have <code>iss</code> set to <code>securetoken.google.com/&lt;firebase-project-id&gt;</code> plus a dedicated <code>firebase</code> claim. This shows WSOP receives the <b>native Google idToken</b>, without Firebase re-issuing it.</div>
       </div>
 
       <ul class="evidence-list">
-        <li>登录相关请求类型是 <code>fedcm</code> / <code>web-identity</code> —— 这是浏览器原生 FedCM API 的请求，属于 Google Identity Services（不是 Firebase SDK 的请求特征）</li>
-        <li>没有出现任何 <code>__/auth/handler</code> 或 <code>identitytoolkit.googleapis.com</code> 相关请求</li>
-        <li>推测 WSOP 自己的后端拿到这个 Google idToken 后，自行验签、自行维护登录会话（可能转换成自己的 session token 或 cookie），登录状态维持逻辑是自研的，不依赖 Firebase</li>
+        <li class="zh">登录相关请求类型是 <code>fedcm</code> / <code>web-identity</code> —— 这是浏览器原生 FedCM API 的请求，属于 Google Identity Services（不是 Firebase SDK 的请求特征）</li><li class="en">The sign-in related requests are of type <code>fedcm</code> / <code>web-identity</code> — these come from the browser’s native FedCM API and are part of Google Identity Services (not a signature of the Firebase SDK)</li>
+        <li class="zh">没有出现任何 <code>__/auth/handler</code> 或 <code>identitytoolkit.googleapis.com</code> 相关请求</li><li class="en">No <code>__/auth/handler</code> or <code>identitytoolkit.googleapis.com</code> requests appear at all</li>
+        <li class="zh">推测 WSOP 自己的后端拿到这个 Google idToken 后，自行验签、自行维护登录会话（可能转换成自己的 session token 或 cookie），登录状态维持逻辑是自研的，不依赖 Firebase</li><li class="en">We infer that WSOP’s own backend verifies this Google idToken itself and maintains the login session on its own (possibly exchanging it for its own session token or cookie); the session-keeping logic is self-built and does not depend on Firebase</li>
       </ul>
     </div>
 
     <div class="competitor-card">
       <div class="competitor-head">
         <div>
-          <div class="competitor-name">竞品 3 · Zynga Poker</div>
+          <div class="competitor-name"><span class="zh">竞品 3 · Zynga Poker</span><span class="en">Competitor 3 · Zynga Poker</span></div>
           <div class="competitor-url">zyngapoker.com</div>
         </div>
       </div>
-      <div class="conclusion-badge no">✕ 不支持 Google 登录</div>
+      <div class="conclusion-badge no"><span class="zh">✕ 不支持 Google 登录</span><span class="en">✕ Google sign-in not supported</span></div>
 
-      <h3>登录入口只有两个选项</h3>
-      <p class="muted">登录页只提供「Login with Zynga Poker」（自家账号体系）和「Login with Facebook」两个入口，没有 Google 登录选项，也没有 Apple 登录选项。</p>
+      <h3><span class="zh">登录入口只有两个选项</span><span class="en">Only two sign-in options</span></h3>
+      <p class="zh muted">登录页只提供「Login with Zynga Poker」（自家账号体系）和「Login with Facebook」两个入口，没有 Google 登录选项，也没有 Apple 登录选项。</p><p class="en muted">The sign-in page offers just “Login with Zynga Poker” (its own account system) and “Login with Facebook”. There is no Google option and no Apple option.</p>
     </div>
 
-    <div class="pending-card">后续竞品持续补充中…</div>
+    <div class="pending-card"><span class="zh">后续竞品持续补充中…</span><span class="en">More competitors to be added…</span></div>
   </section>
 
   <section id="recommendation">
-    <h2><span class="section-num">3</span>推荐方案</h2>
-    <p>结合竞品调研结果，WebGL / iOS 场景下的第三方登录，有两条可行路径：</p>
+    <h2><span class="section-num">3</span><span class="zh">推荐方案</span><span class="en">Recommendation</span></h2>
+    <p class="zh">结合竞品调研结果，WebGL / iOS 场景下的第三方登录，有两条可行路径：</p><p class="en">Based on the competitor research, there are two viable paths for third-party sign-in on WebGL / iOS:</p>
 
     <div class="option-grid">
       <div class="option-card">
-        <div class="option-label">方案一</div>
-        <div class="option-title">接入 Firebase Auth</div>
-        <div class="option-desc">由 Firebase 统一接管 Google / Facebook / Apple 等登录方式，业务侧只对接 Firebase 提供的 SDK 和用户体系。竞品 Mega Hit Poker 采用的正是这条路径。</div>
-        <div class="option-pros"><b>优势</b>开发成本低、无需自己维护 Token 刷新逻辑、多个登录方式统一管理、有大公司持续维护</div>
-        <div class="option-cons"><b>需要注意</b>用户体系托管在 Firebase，深度定制会受限于 Firebase 的能力边界</div>
+        <div class="option-label"><span class="zh">方案一</span><span class="en">Option 1</span></div>
+        <div class="option-title"><span class="zh">接入 Firebase Auth</span><span class="en">Integrate Firebase Auth</span></div>
+        <div class="option-desc"><span class="zh">由 Firebase 统一接管 Google / Facebook / Apple 等登录方式，业务侧只对接 Firebase 提供的 SDK 和用户体系。竞品 Mega Hit Poker 采用的正是这条路径。</span><span class="en">Firebase takes over Google / Facebook / Apple sign-in in one place, and the business side only integrates Firebase’s SDK and user system. Competitor Mega Hit Poker takes exactly this path.</span></div>
+        <div class="option-pros"><b><span class="zh">优势</span><span class="en">Pros</span></b><span class="zh">开发成本低、无需自己维护 Token 刷新逻辑、多个登录方式统一管理、有大公司持续维护</span><span class="en">Low development cost, no need to maintain token refresh logic yourself, multiple sign-in methods managed in one place, actively maintained by a major vendor</span></div>
+        <div class="option-cons"><b><span class="zh">需要注意</span><span class="en">Watch out</span></b><span class="zh">用户体系托管在 Firebase，深度定制会受限于 Firebase 的能力边界</span><span class="en">The user system is hosted on Firebase, so deep customization is limited by Firebase’s capabilities</span></div>
       </div>
       <div class="option-card">
-        <div class="option-label">方案二</div>
-        <div class="option-title">自研维持登录方案</div>
-        <div class="option-desc">参照 Firebase 的实现思路（idToken 验签 + refreshToken 静默续期），自己实现一套登录状态维持机制，只在最初的身份验证阶段对接各平台的 OAuth。竞品 WSOP 采用的正是这条路径。</div>
-        <div class="option-pros"><b>优势</b>用户体系完全自主可控、不依赖第三方服务的可用性和政策变化</div>
-        <div class="option-cons"><b>需要注意</b>开发和维护成本明显更高，需要自己处理 Token 签发、续期、多端同步等一整套逻辑</div>
+        <div class="option-label"><span class="zh">方案二</span><span class="en">Option 2</span></div>
+        <div class="option-title"><span class="zh">自研维持登录方案</span><span class="en">Self-built session persistence</span></div>
+        <div class="option-desc"><span class="zh">参照 Firebase 的实现思路（idToken 验签 + refreshToken 静默续期），自己实现一套登录状态维持机制，只在最初的身份验证阶段对接各平台的 OAuth。竞品 WSOP 采用的正是这条路径。</span><span class="en">Follow Firebase’s approach (idToken signature verification + refreshToken silent renewal) to build your own session-keeping mechanism, integrating each platform’s OAuth only for the initial identity verification. Competitor WSOP takes exactly this path.</span></div>
+        <div class="option-pros"><b><span class="zh">优势</span><span class="en">Pros</span></b><span class="zh">用户体系完全自主可控、不依赖第三方服务的可用性和政策变化</span><span class="en">Full control over the user system, no dependence on a third party’s availability or policy changes</span></div>
+        <div class="option-cons"><b><span class="zh">需要注意</span><span class="en">Watch out</span></b><span class="zh">开发和维护成本明显更高，需要自己处理 Token 签发、续期、多端同步等一整套逻辑</span><span class="en">Noticeably higher development and maintenance cost; you must handle token issuing, renewal, multi-device sync and more yourself</span></div>
       </div>
     </div>
 
     <div class="demo-cta">
       <div class="demo-cta-text">
-        <b>方案一的可运行示例</b>
-        本项目内已经跑通 Firebase Auth 的 Google 登录流程，可直接预览体验
+        <b><span class="zh">方案一的可运行示例</span><span class="en">A runnable example of Option 1</span></b>
+        <span class="zh">本项目内已经跑通 Firebase Auth 的 Google 登录流程，可直接预览体验</span><span class="en">Google sign-in with Firebase Auth already works end to end in this project; try it out directly</span>
       </div>
-      <a class="demo-btn" href="demo.html">预览 Firebase Auth Demo →</a>
+      <a class="demo-btn" href="demo.html"><span class="zh">预览 Firebase Auth Demo →</span><span class="en">Preview Firebase Auth Demo →</span></a>
     </div>
   </section>
 
 </div>
 
-<footer>Firebase Auth Demo · 第三方登录接入方案分析</footer>
+<footer><span class="zh">Firebase Auth Demo · 第三方登录接入方案分析</span><span class="en">Firebase Auth Demo · Third-Party Login Integration Analysis</span></footer>
 
 <div class="lightbox" id="lightbox">
   <div class="lightbox-close">&times;</div>
@@ -351,6 +359,17 @@
 </div>
 
 <script>
+  const TITLES = { zh: '第三方登录接入方案分析', en: 'Third-Party Login Integration Analysis' };
+  function setLang(lang) {
+    document.documentElement.lang = lang === 'en' ? 'en' : 'zh-CN';
+    document.title = TITLES[lang];
+    document.querySelectorAll('.lang-switch button').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+    document.querySelectorAll('img[data-alt-zh]').forEach(img => { img.alt = img.dataset['alt' + (lang === 'en' ? 'En' : 'Zh')]; });
+    try { localStorage.setItem('lang', lang); } catch (e) {}
+  }
+  document.querySelectorAll('.lang-switch button').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+  setLang(document.documentElement.lang === 'en' ? 'en' : 'zh');
+
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightboxImg');
   document.querySelectorAll('.shot img').forEach(img => {
