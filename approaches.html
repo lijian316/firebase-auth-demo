@@ -74,8 +74,8 @@
   .svgfc .n-bad { fill: #fdecec; stroke: #e08a8a; stroke-width: 1.5; }
   .svgfc .n-start { fill: #f1f3f6; stroke: #b8bec6; stroke-width: 1.5; }
 
-  .cd { margin-top: 40px; }
-  .cd h3 { font-size: 16px; margin: 0 0 6px; }
+  .cd { margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--border); }
+  .cd h3 { font-size: 14.5px; margin: 0 0 6px; }
   .cd ol { margin: 10px 0 0; padding-left: 20px; font-size: 13.5px; }
   .cd ol li { margin-bottom: 12px; }
   .cd .steps { margin: 12px 0 0; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
@@ -91,15 +91,15 @@
   .ap-num { font-size: 11px; font-weight: 700; color: var(--accent); background: var(--accent-bg); padding: 2px 9px; border-radius: 8px; }
   .ap-name { font-size: 15px; font-weight: 700; }
   .ap-tag { font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 10px; background: var(--code-bg); color: var(--muted); }
-  .ap ul { list-style: none; margin: 0; padding: 0; }
-  .ap li { display: flex; gap: 12px; padding: 7px 0; border-top: 1px dashed var(--border); font-size: 13.5px; }
-  .ap li:first-child { border-top: none; }
-  .ap li .k { flex: 0 0 170px; color: var(--muted); font-weight: 600; font-size: 12.5px; }
-  .ap li .v { flex: 1; min-width: 0; }
-  .ap li .v.win { color: var(--ok); font-weight: 600; }
-  .ap li .v.lose { color: var(--muted); }
+  .ap > ul { list-style: none; margin: 0; padding: 0; }
+  .ap > ul > li { display: flex; gap: 12px; padding: 7px 0; border-top: 1px dashed var(--border); font-size: 13.5px; }
+  .ap > ul > li:first-child { border-top: none; }
+  .ap > ul > li .k { flex: 0 0 170px; color: var(--muted); font-weight: 600; font-size: 12.5px; }
+  .ap > ul > li .v { flex: 1; min-width: 0; }
+  .ap > ul > li .v.win { color: var(--ok); font-weight: 600; }
+  .ap > ul > li .v.lose { color: var(--muted); }
   .ap-note { margin-top: 10px; font-size: 12.5px; color: #6b5416; background: #fff8e6; border: 1px solid #f0dca0; border-radius: 8px; padding: 8px 12px; }
-  @media (max-width: 560px) { .ap li { flex-direction: column; gap: 2px; } .ap li .k { flex: none; } }
+  @media (max-width: 560px) { .ap > ul > li { flex-direction: column; gap: 2px; } .ap > ul > li .k { flex: none; } }
 </style>
 </head>
 <body>
@@ -152,7 +152,7 @@
         <li><span class="k"><span class="zh">含可验证的 id_token</span><span class="en">Includes a verifiable id_token</span></span><span class="v win"><span class="zh">是（换取结果里含）</span><span class="en">Yes (included in the exchange result)</span></span></li>
         <li><span class="k"><span class="zh">换取步骤在哪</span><span class="en">Where the exchange happens</span></span><span class="v "><span class="zh">后端用 <code>client_secret</code> 换</span><span class="en">Backend, via <code>client_secret</code></span></span></li>
         <li><span class="k"><span class="zh">后端校验要改</span><span class="en">Backend verification needs rewriting</span></span><span class="v win"><span class="zh">不用改，复用现有</span><span class="en">No, reuses existing logic</span></span></li>
-        <li><span class="k"><span class="zh">能否保持登录</span><span class="en">Can keep the user signed in</span></span><span class="v win"><a href="#flow"><span class="zh">可自己维护登录保持（保持登录方案有 3 种，点击查看下方完整流程 ↓）</span><span class="en">Can be maintained on your own (3 session-persistence options; click to see the full flow below ↓)</span></a></span></li>
+        <li><span class="k"><span class="zh">能否保持登录</span><span class="en">Can keep the user signed in</span></span><span class="v win"><a href="#flow"><span class="zh">详见下方保持登录方案</span><span class="en">See the session-persistence options below</span></a></span></li>
       </ul>
     </div>
     <div class="ap">
@@ -165,28 +165,27 @@
         <li><span class="k"><span class="zh">含可验证的 id_token</span><span class="en">Includes a verifiable id_token</span></span><span class="v win"><span class="zh">是（两条路径最终都有）</span><span class="en">Yes (both paths end up with one)</span></span></li>
         <li><span class="k"><span class="zh">换取步骤在哪</span><span class="en">Where the exchange happens</span></span><span class="v "><span class="zh">平时无需换取；冷却期间后端用 <code>client_secret</code> 换</span><span class="en">None normally; during the cooldown the backend exchanges via <code>client_secret</code></span></span></li>
         <li><span class="k"><span class="zh">后端校验要改</span><span class="en">Backend verification needs rewriting</span></span><span class="v "><span class="zh">校验逻辑复用现有，但要为冷却路径新增 code 换取接口（同方案 3）</span><span class="en">Verification logic is reused, but a code-exchange endpoint must be added for the cooldown path (same as Approach 3)</span></span></li>
-        <li><span class="k"><span class="zh">能否保持登录</span><span class="en">Can keep the user signed in</span></span><span class="v "><a href="#flow"><span class="zh">走 One Tap 路径时需自建会话；走方案 3 路径时可拿到 refresh_token 静默续期（点击查看下方详情 ↓）</span><span class="en">On the One Tap path you need your own session; on the Approach 3 path a refresh_token allows silent renewal (click to see the details below ↓)</span></a></span></li>
+        <li><span class="k"><span class="zh">能否保持登录</span><span class="en">Can keep the user signed in</span></span><span class="v "><a href="#flow"><span class="zh">详见下方保持登录方案</span><span class="en">See the session-persistence options below</span></a></span></li>
       </ul>
       <div class="ap-note"><span class="zh">是否处于冷却期没有官方 API 可以判断，只能靠非官方信号推断（详见下方「如何判断 One Tap 是否处于冷却期」）；而方案 3 能让 Google 登录在形式和体验上与 Apple、Facebook 登录保持一致。</span><span class="en">There is no official API to tell whether the cooldown is in effect; it can only be inferred from unofficial signals (see “How to tell whether One Tap is on cooldown” below). Approach 3 also keeps Google sign-in visually and behaviorally consistent with Apple and Facebook sign-in.</span></div>
+      <div class="cd" id="cooldown">
+        <h3><span class="zh">如何判断 One Tap 是否处于冷却期</span><span class="en">How to tell whether One Tap is on cooldown</span></h3>
+        <p class="zh muted">用户关闭 One Tap 卡片后，Google 会按次数递增冷却时间，期间 <code>prompt()</code> 不会再弹出：</p><p class="en muted">After the user closes the One Tap card, Google applies a growing cooldown during which <code>prompt()</code> no longer shows it:</p>
+        <div class="steps">
+          <div><span><span class="zh">第 1 次关闭</span><span class="en">1st dismissal</span></span><b><span class="zh">2 小时</span><span class="en">2 hours</span></b></div>
+          <div><span><span class="zh">第 2 次关闭</span><span class="en">2nd dismissal</span></span><b><span class="zh">1 天</span><span class="en">1 day</span></b></div>
+          <div><span><span class="zh">第 3 次关闭</span><span class="en">3rd dismissal</span></span><b><span class="zh">1 周</span><span class="en">1 week</span></b></div>
+          <div><span><span class="zh">第 4 次及以后</span><span class="en">4th and later</span></span><b><span class="zh">4 周</span><span class="en">4 weeks</span></b></div>
+        </div>
+        <p class="zh muted" style="margin-top:16px"><b>目前没有稳定的正式 API 可以直接回答"现在是否处于冷却期"</b>，只能间接判断，常见做法有三种：</p><p class="en muted" style="margin-top:16px"><b>There is no stable, official API that directly answers “is it on cooldown right now”</b>; it can only be judged indirectly. There are three common approaches:</p>
+        <ol>
+            <li class="zh"><b>看 <code>prompt()</code> 的结果通知（官方，但在被弃用）</b>：调用 <code>google.accounts.id.prompt(callback)</code>，在回调里用 <code>isNotDisplayed()</code> 加 <code>getNotDisplayedReason()</code> 判断，原因为 <code>suppressed_by_user</code> 就表示处于用户关闭后的冷却期。注意：启用 FedCM 后，这类状态方法不再可靠，Google 也在弃用它们，请以 Google 最新文档为准</li><li class="en"><b>Read the result notification of <code>prompt()</code> (official, but being deprecated)</b>: call <code>google.accounts.id.prompt(callback)</code> and, in the callback, use <code>isNotDisplayed()</code> with <code>getNotDisplayedReason()</code>; a reason of <code>suppressed_by_user</code> means the user-dismissal cooldown is in effect. Note: with FedCM these status methods are no longer reliable and Google is deprecating them, so check Google’s latest docs</li>
+            <li class="zh"><b>前端自己记录关闭时间（推断）</b>：用户关闭 One Tap 时（回调里 <code>isSkippedMoment()</code> 且 <code>getSkippedReason()</code> 为 <code>user_cancel</code>），在本地记下时间和累计次数，再按上面的阶梯（2 小时 / 1 天 / 1 周 / 4 周）估算是否仍在冷却期。缺点：只是估算，看不到 Google 侧的真实状态，用户清除站点数据或换设备就会失准</li><li class="en"><b>Record the dismissal time in the front end (inference)</b>: when the user closes One Tap (<code>isSkippedMoment()</code> with <code>getSkippedReason()</code> equal to <code>user_cancel</code> in the callback), store the time and a running count locally, then estimate whether it is still on cooldown with the ladder above (2 hours / 1 day / 1 week / 4 weeks). Downside: it is only an estimate, you cannot see Google’s real state, and it drifts if the user clears site data or switches devices</li>
+            <li class="zh"><b>不判断，直接试</b>：每次先调用 <code>prompt()</code>，如果没有弹出（通知为未显示，或等待一小段时间仍无反应），就直接改用 OAuth 弹窗。最简单，代价是需要设一个超时，可能有短暂的等待</li><li class="en"><b>Do not judge, just try</b>: always call <code>prompt()</code> first and, if nothing is shown (the notification says not displayed, or nothing happens after a short wait), switch straight to the OAuth popup. The simplest option; the cost is that you need a timeout and there may be a brief wait</li>
+        </ol>
+        <div class="note"><div class="zh">以上是通用做法，<b>并不是 WSOP 的实际实现</b>，WSOP 具体怎么判断冷却期目前未知。这也是上面对比里"方案 3（Authorization Code）"更受青睐的原因之一：它不依赖 One Tap，就不需要判断冷却期。</div><div class="en">These are general approaches and <b>not WSOP’s actual implementation</b>; how WSOP detects the cooldown is not known. It is also one reason Approach 3 (Authorization Code) in the comparison above is preferred: it does not rely on One Tap, so there is no cooldown to detect.</div></div>
+      </div>
     </div>
-  </div>
-
-  <div class="cd" id="cooldown">
-    <h3><span class="zh">如何判断 One Tap 是否处于冷却期</span><span class="en">How to tell whether One Tap is on cooldown</span></h3>
-    <p class="zh muted">用户关闭 One Tap 卡片后，Google 会按次数递增冷却时间，期间 <code>prompt()</code> 不会再弹出：</p><p class="en muted">After the user closes the One Tap card, Google applies a growing cooldown during which <code>prompt()</code> no longer shows it:</p>
-    <div class="steps">
-      <div><span><span class="zh">第 1 次关闭</span><span class="en">1st dismissal</span></span><b><span class="zh">2 小时</span><span class="en">2 hours</span></b></div>
-      <div><span><span class="zh">第 2 次关闭</span><span class="en">2nd dismissal</span></span><b><span class="zh">1 天</span><span class="en">1 day</span></b></div>
-      <div><span><span class="zh">第 3 次关闭</span><span class="en">3rd dismissal</span></span><b><span class="zh">1 周</span><span class="en">1 week</span></b></div>
-      <div><span><span class="zh">第 4 次及以后</span><span class="en">4th and later</span></span><b><span class="zh">4 周</span><span class="en">4 weeks</span></b></div>
-    </div>
-    <p class="zh muted" style="margin-top:16px"><b>目前没有稳定的正式 API 可以直接回答"现在是否处于冷却期"</b>，只能间接判断，常见做法有三种：</p><p class="en muted" style="margin-top:16px"><b>There is no stable, official API that directly answers “is it on cooldown right now”</b>; it can only be judged indirectly. There are three common approaches:</p>
-    <ol>
-        <li class="zh"><b>看 <code>prompt()</code> 的结果通知（官方，但在被弃用）</b>：调用 <code>google.accounts.id.prompt(callback)</code>，在回调里用 <code>isNotDisplayed()</code> 加 <code>getNotDisplayedReason()</code> 判断，原因为 <code>suppressed_by_user</code> 就表示处于用户关闭后的冷却期。注意：启用 FedCM 后，这类状态方法不再可靠，Google 也在弃用它们，请以 Google 最新文档为准</li><li class="en"><b>Read the result notification of <code>prompt()</code> (official, but being deprecated)</b>: call <code>google.accounts.id.prompt(callback)</code> and, in the callback, use <code>isNotDisplayed()</code> with <code>getNotDisplayedReason()</code>; a reason of <code>suppressed_by_user</code> means the user-dismissal cooldown is in effect. Note: with FedCM these status methods are no longer reliable and Google is deprecating them, so check Google’s latest docs</li>
-        <li class="zh"><b>前端自己记录关闭时间（推断）</b>：用户关闭 One Tap 时（回调里 <code>isSkippedMoment()</code> 且 <code>getSkippedReason()</code> 为 <code>user_cancel</code>），在本地记下时间和累计次数，再按上面的阶梯（2 小时 / 1 天 / 1 周 / 4 周）估算是否仍在冷却期。缺点：只是估算，看不到 Google 侧的真实状态，用户清除站点数据或换设备就会失准</li><li class="en"><b>Record the dismissal time in the front end (inference)</b>: when the user closes One Tap (<code>isSkippedMoment()</code> with <code>getSkippedReason()</code> equal to <code>user_cancel</code> in the callback), store the time and a running count locally, then estimate whether it is still on cooldown with the ladder above (2 hours / 1 day / 1 week / 4 weeks). Downside: it is only an estimate, you cannot see Google’s real state, and it drifts if the user clears site data or switches devices</li>
-        <li class="zh"><b>不判断，直接试</b>：每次先调用 <code>prompt()</code>，如果没有弹出（通知为未显示，或等待一小段时间仍无反应），就直接改用 OAuth 弹窗。最简单，代价是需要设一个超时，可能有短暂的等待</li><li class="en"><b>Do not judge, just try</b>: always call <code>prompt()</code> first and, if nothing is shown (the notification says not displayed, or nothing happens after a short wait), switch straight to the OAuth popup. The simplest option; the cost is that you need a timeout and there may be a brief wait</li>
-    </ol>
-    <div class="note"><div class="zh">以上是通用做法，<b>并不是 WSOP 的实际实现</b>，WSOP 具体怎么判断冷却期目前未知。这也是上面对比里"方案 3（Authorization Code）"更受青睐的原因之一：它不依赖 One Tap，就不需要判断冷却期。</div><div class="en">These are general approaches and <b>not WSOP’s actual implementation</b>; how WSOP detects the cooldown is not known. It is also one reason Approach 3 (Authorization Code) in the comparison above is preferred: it does not rely on One Tap, so there is no cooldown to detect.</div></div>
   </div>
 
   <div class="flow" id="flow">
