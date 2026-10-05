@@ -152,16 +152,11 @@
   .option-pros b { color: var(--ok); }
   .option-cons b { color: var(--warn); }
 
-  .demo-cta {
-    margin-top: 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
-    background: var(--accent-bg); border: 1px solid #c8ddff; border-radius: var(--radius);
-    padding: 18px 22px;
-  }
-  .demo-cta-text { font-size: 13.5px; }
-  .demo-cta-text b { display: block; font-size: 15px; margin-bottom: 4px; }
+  .option-demo { margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--border); }
+  .option-demo-note { font-size: 12.5px; color: var(--muted); margin-bottom: 10px; }
   .demo-btn {
     background: var(--accent); color: #fff; text-decoration: none; font-weight: 700; font-size: 13.5px;
-    padding: 10px 20px; border-radius: 9px; white-space: nowrap;
+    padding: 10px 20px; border-radius: 9px; white-space: nowrap; display: inline-block;
   }
   .demo-btn:hover { opacity: .9; }
 
@@ -330,6 +325,10 @@
         <div class="option-desc"><span class="zh">由 Firebase 统一接管 Google 登录，业务侧只对接 Firebase 提供的 SDK 和用户体系。竞品 Mega Hit Poker 采用的正是这条路径。</span><span class="en">Firebase takes over Google sign-in in one place, and the business side only integrates Firebase’s SDK and user system. Competitor Mega Hit Poker takes exactly this path.</span></div>
         <div class="option-pros"><b><span class="zh">优势</span><span class="en">Pros</span></b><span class="zh">开发成本低、无需自己维护 Token 刷新逻辑、多个登录方式统一管理、有大公司持续维护</span><span class="en">Low development cost, no need to maintain token refresh logic yourself, multiple sign-in methods managed in one place, actively maintained by a major vendor</span></div>
         <div class="option-cons"><b><span class="zh">需要注意</span><span class="en">Watch out</span></b><span class="zh">用户体系托管在 Firebase，深度定制会受限于 Firebase 的能力边界</span><span class="en">The user system is hosted on Firebase, so deep customization is limited by Firebase’s capabilities</span></div>
+        <div class="option-demo">
+          <div class="option-demo-note"><span class="zh">可运行示例：本项目内已跑通 Firebase Auth 的 Google 登录流程，可直接预览体验。</span><span class="en">Runnable example: Google sign-in with Firebase Auth already works end to end in this project; try it out directly.</span></div>
+          <a class="demo-btn" href="demo.html"><span class="zh">预览 Firebase Auth Demo →</span><span class="en">Preview Firebase Auth Demo →</span></a>
+        </div>
       </div>
       <div class="option-card">
         <div class="option-label"><span class="zh">方案二</span><span class="en">Option 2</span></div>
@@ -338,14 +337,6 @@
         <div class="option-pros"><b><span class="zh">优势</span><span class="en">Pros</span></b><span class="zh">用户体系完全自主可控、不依赖第三方服务的可用性和政策变化</span><span class="en">Full control over the user system, no dependence on a third party’s availability or policy changes</span></div>
         <div class="option-cons"><b><span class="zh">需要注意</span><span class="en">Watch out</span></b><span class="zh">开发和维护成本明显更高，需要自己处理 Token 签发、续期、多端同步等一整套逻辑</span><span class="en">Noticeably higher development and maintenance cost; you must handle token issuing, renewal, multi-device sync and more yourself</span></div>
       </div>
-    </div>
-
-    <div class="demo-cta">
-      <div class="demo-cta-text">
-        <b><span class="zh">方案一的可运行示例</span><span class="en">A runnable example of Option 1</span></b>
-        <span class="zh">本项目内已经跑通 Firebase Auth 的 Google 登录流程，可直接预览体验</span><span class="en">Google sign-in with Firebase Auth already works end to end in this project; try it out directly</span>
-      </div>
-      <a class="demo-btn" href="demo.html"><span class="zh">预览 Firebase Auth Demo →</span><span class="en">Preview Firebase Auth Demo →</span></a>
     </div>
   </section>
 
