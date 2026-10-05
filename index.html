@@ -367,14 +367,6 @@ google.accounts.id.renderButton(document.getElementById(<span class="v">'gbtn'</
         </div>
       </div>
 
-      <div class="compare-note">
-        ⚠️ <div class="zh"><b>关于"是不是自己维护"：</b>这个系统提示本身<b>区分不出</b>是 Google 官方 iOS SDK 还是自己实现的网页授权——官方 SDK 底层同样使用系统的网页授权会话，也会弹出一模一样的提示。目前能确定的只有"iOS 端走的是网页弹出"；登录状态大概率由 Pokerist 自己的后端维护，但这一点是推测，尚未抓包验证。</div><div class="en"><b>On “is it self-maintained”:</b> this system prompt <b>cannot tell apart</b> Google’s official iOS SDK from a self-built web-auth implementation — the official SDK also uses the system web authentication session under the hood and shows exactly the same prompt. All we can say for sure is that “iOS goes through a web popup”; the login session is most likely maintained by Pokerist’s own backend, but that is an inference and has not been verified by traffic capture.</div>
-      </div>
-
-      <ul class="evidence-list">
-        <li class="zh">网页版 DevTools 的 Local storage / Session storage 来源里只有 google.com 和 pokerist.com，没有 <code>firebaseapp.com</code>，看不到 Firebase 的特征</li><li class="en">In the web version’s DevTools, Local / Session storage only list google.com and pokerist.com, with no <code>firebaseapp.com</code>; no Firebase signature is visible</li>
-        <li class="zh">网页版的判断来自 DevTools 截图，没有抓到点击后的回调请求，因此无法确认回调带的是 <code>credential</code>（ID Token）还是其他参数</li><li class="en">The web-version conclusion comes from a DevTools screenshot; the post-click callback request was not captured, so we cannot confirm whether it carries a <code>credential</code> (ID Token) or something else</li>
-      </ul>
     </div>
 
     <div class="pending-card"><span class="zh">后续竞品持续补充中…</span><span class="en">More competitors to be added…</span></div>
