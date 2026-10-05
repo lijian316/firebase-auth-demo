@@ -153,6 +153,7 @@
         <li><span class="k"><span class="zh">后端校验要改</span><span class="en">Backend verification needs rewriting</span></span><span class="v win"><span class="zh">不用改，复用现有</span><span class="en">No, reuses existing logic</span></span></li>
         <li><span class="k"><span class="zh">能否保持登录</span><span class="en">Can keep the user signed in</span></span><span class="v win"><span class="zh">是：后端换取时可拿到 refresh_token，服务端可静默续期，无需用户再次授权</span><span class="en">Yes: the backend can obtain a refresh_token during the exchange and renew silently on the server, without asking the user again</span></span></li>
       </ul>
+      <div class="ap-note"><span class="zh">Access Token 方案会把"Google 签名担保身份"降级成"客户端自己上报的数据"，安全性下降，所以推荐采用 Authorization Code 方案。</span><span class="en">The Access Token approach downgrades “an identity Google vouches for” to “data the client self-reports” — a real drop in security — so Authorization Code is the recommended approach.</span></div>
     </div>
     <div class="ap">
       <div class="ap-head"><span class="ap-num"><span class="zh">方案 4</span><span class="en">Approach 4</span></span><span class="ap-name">One Tap + Authorization Code</span></div>
@@ -169,7 +170,7 @@
       <div class="ap-note"><span class="zh">是否处于冷却期没有官方 API 可以判断，只能靠非官方信号推断（详见下方「如何判断 One Tap 是否处于冷却期」）；而方案 3 能让 Google 登录在形式和体验上与 Apple、Facebook 登录保持一致。</span><span class="en">There is no official API to tell whether the cooldown is in effect; it can only be inferred from unofficial signals (see “How to tell whether One Tap is on cooldown” below). Approach 3 also keeps Google sign-in visually and behaviorally consistent with Apple and Facebook sign-in.</span></div>
     </div>
   </div>
-          <p class="zh muted" style="margin-top:12px">Access Token 方案会把"Google 签名担保身份"降级成"客户端自己上报的数据"，安全性下降，所以推荐采用 Authorization Code 方案。</p><p class="en muted" style="margin-top:12px">The Access Token approach downgrades “an identity Google vouches for” to “data the client self-reports” — a real drop in security — so Authorization Code is the recommended approach.</p>
+
   <div class="cd" id="cooldown">
     <h3><span class="zh">如何判断 One Tap 是否处于冷却期</span><span class="en">How to tell whether One Tap is on cooldown</span></h3>
     <p class="zh muted">用户关闭 One Tap 卡片后，Google 会按次数递增冷却时间，期间 <code>prompt()</code> 不会再弹出：</p><p class="en muted">After the user closes the One Tap card, Google applies a growing cooldown during which <code>prompt()</code> no longer shows it:</p>
