@@ -140,6 +140,7 @@
         <li><span class="k"><span class="zh">后端校验要改</span><span class="en">Backend verification needs rewriting</span></span><span class="v lose"><span class="zh">要重写</span><span class="en">Yes, must be rewritten</span></span></li>
         <li><span class="k"><span class="zh">能否保持登录</span><span class="en">Can keep the user signed in</span></span><span class="v lose"><span class="zh">否：access_token 约 1 小时过期，浏览器端拿不到 refresh token，需自建会话</span><span class="en">No: the access_token expires in about 1 hour and the browser gets no refresh token; you need your own session</span></span></li>
       </ul>
+      <div class="ap-note"><span class="zh">Access Token 方案会把"Google 签名担保身份"降级成"客户端自己上报的数据"，安全性下降，所以推荐采用 Authorization Code 方案。</span><span class="en">The Access Token approach downgrades “an identity Google vouches for” to “data the client self-reports” — a real drop in security — so Authorization Code is the recommended approach.</span></div>
     </div>
     <div class="ap rec">
       <div class="ap-head"><span class="ap-num"><span class="zh">方案 3</span><span class="en">Approach 3</span></span><span class="ap-name">Authorization Code</span></div>
@@ -153,7 +154,6 @@
         <li><span class="k"><span class="zh">后端校验要改</span><span class="en">Backend verification needs rewriting</span></span><span class="v win"><span class="zh">不用改，复用现有</span><span class="en">No, reuses existing logic</span></span></li>
         <li><span class="k"><span class="zh">能否保持登录</span><span class="en">Can keep the user signed in</span></span><span class="v win"><span class="zh">是：后端换取时可拿到 refresh_token，服务端可静默续期，无需用户再次授权</span><span class="en">Yes: the backend can obtain a refresh_token during the exchange and renew silently on the server, without asking the user again</span></span></li>
       </ul>
-      <div class="ap-note"><span class="zh">Access Token 方案会把"Google 签名担保身份"降级成"客户端自己上报的数据"，安全性下降，所以推荐采用 Authorization Code 方案。</span><span class="en">The Access Token approach downgrades “an identity Google vouches for” to “data the client self-reports” — a real drop in security — so Authorization Code is the recommended approach.</span></div>
     </div>
     <div class="ap">
       <div class="ap-head"><span class="ap-num"><span class="zh">方案 4</span><span class="en">Approach 4</span></span><span class="ap-name">One Tap + Authorization Code</span></div>
