@@ -152,7 +152,7 @@
         <li><span class="k"><span class="zh">含可验证的 id_token</span><span class="en">Includes a verifiable id_token</span></span><span class="v win"><span class="zh">是（换取结果里含）</span><span class="en">Yes (included in the exchange result)</span></span></li>
         <li><span class="k"><span class="zh">换取步骤在哪</span><span class="en">Where the exchange happens</span></span><span class="v "><span class="zh">后端用 <code>client_secret</code> 换</span><span class="en">Backend, via <code>client_secret</code></span></span></li>
         <li><span class="k"><span class="zh">后端校验要改</span><span class="en">Backend verification needs rewriting</span></span><span class="v win"><span class="zh">不用改，复用现有</span><span class="en">No, reuses existing logic</span></span></li>
-        <li><span class="k"><span class="zh">能否保持登录</span><span class="en">Can keep the user signed in</span></span><span class="v win"><span class="zh">是：后端换取时可拿到 refresh_token，服务端可静默续期，无需用户再次授权</span><span class="en">Yes: the backend can obtain a refresh_token during the exchange and renew silently on the server, without asking the user again</span></span></li>
+        <li><span class="k"><span class="zh">能否保持登录</span><span class="en">Can keep the user signed in</span></span><span class="v win"><a href="#flow"><span class="zh">可自己维护登录保持（保持登录方案有 3 种，点击查看下方完整流程 ↓）</span><span class="en">Can be maintained on your own (3 session-persistence options; click to see the full flow below ↓)</span></a></span></li>
       </ul>
     </div>
     <div class="ap">
