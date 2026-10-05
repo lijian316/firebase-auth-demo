@@ -88,6 +88,16 @@
   .svgfc .n-ok { fill: #e6f5ee; stroke: #58b88b; stroke-width: 1.5; }
   .svgfc .n-bad { fill: #fdecec; stroke: #e08a8a; stroke-width: 1.5; }
   .svgfc .n-start { fill: #f1f3f6; stroke: #b8bec6; stroke-width: 1.5; }
+
+  .cd { margin-top: 40px; }
+  .cd h3 { font-size: 16px; margin: 0 0 6px; }
+  .cd ol { margin: 10px 0 0; padding-left: 20px; font-size: 13.5px; }
+  .cd ol li { margin-bottom: 12px; }
+  .cd .steps { margin: 12px 0 0; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
+  .cd .steps div { display: flex; justify-content: space-between; gap: 12px; padding: 8px 14px; font-size: 13px; border-bottom: 1px solid var(--border); }
+  .cd .steps div:last-child { border-bottom: none; }
+  .cd .steps b { color: #b13a3a; font-variant-numeric: tabular-nums; }
+  .cd .note { margin-top: 14px; background: #fff8e6; border: 1px solid #f0dca0; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #6b5416; }
 </style>
 </head>
 <body>
@@ -125,6 +135,24 @@
             </table>
           </div>
           <p class="zh muted" style="margin-top:12px">Access Token 方案会把"Google 签名担保身份"降级成"客户端自己上报的数据"，安全性下降，所以推荐采用 Authorization Code 方案。</p><p class="en muted" style="margin-top:12px">The Access Token approach downgrades “an identity Google vouches for” to “data the client self-reports” — a real drop in security — so Authorization Code is the recommended approach.</p>
+  <div class="cd" id="cooldown">
+    <h3><span class="zh">如何判断 One Tap 是否处于冷却期</span><span class="en">How to tell whether One Tap is on cooldown</span></h3>
+    <p class="zh muted">用户关闭 One Tap 卡片后，Google 会按次数递增冷却时间，期间 <code>prompt()</code> 不会再弹出：</p><p class="en muted">After the user closes the One Tap card, Google applies a growing cooldown during which <code>prompt()</code> no longer shows it:</p>
+    <div class="steps">
+      <div><span><span class="zh">第 1 次关闭</span><span class="en">1st dismissal</span></span><b><span class="zh">2 小时</span><span class="en">2 hours</span></b></div>
+      <div><span><span class="zh">第 2 次关闭</span><span class="en">2nd dismissal</span></span><b><span class="zh">1 天</span><span class="en">1 day</span></b></div>
+      <div><span><span class="zh">第 3 次关闭</span><span class="en">3rd dismissal</span></span><b><span class="zh">1 周</span><span class="en">1 week</span></b></div>
+      <div><span><span class="zh">第 4 次及以后</span><span class="en">4th and later</span></span><b><span class="zh">4 周</span><span class="en">4 weeks</span></b></div>
+    </div>
+    <p class="zh muted" style="margin-top:16px"><b>目前没有稳定的正式 API 可以直接回答"现在是否处于冷却期"</b>，只能间接判断，常见做法有三种：</p><p class="en muted" style="margin-top:16px"><b>There is no stable, official API that directly answers “is it on cooldown right now”</b>; it can only be judged indirectly. There are three common approaches:</p>
+    <ol>
+        <li class="zh"><b>看 <code>prompt()</code> 的结果通知（官方，但在被弃用）</b>：调用 <code>google.accounts.id.prompt(callback)</code>，在回调里用 <code>isNotDisplayed()</code> 加 <code>getNotDisplayedReason()</code> 判断，原因为 <code>suppressed_by_user</code> 就表示处于用户关闭后的冷却期。注意：启用 FedCM 后，这类状态方法不再可靠，Google 也在弃用它们，请以 Google 最新文档为准</li><li class="en"><b>Read the result notification of <code>prompt()</code> (official, but being deprecated)</b>: call <code>google.accounts.id.prompt(callback)</code> and, in the callback, use <code>isNotDisplayed()</code> with <code>getNotDisplayedReason()</code>; a reason of <code>suppressed_by_user</code> means the user-dismissal cooldown is in effect. Note: with FedCM these status methods are no longer reliable and Google is deprecating them, so check Google’s latest docs</li>
+        <li class="zh"><b>前端自己记录关闭时间（推断）</b>：用户关闭 One Tap 时（回调里 <code>isSkippedMoment()</code> 且 <code>getSkippedReason()</code> 为 <code>user_cancel</code>），在本地记下时间和累计次数，再按上面的阶梯（2 小时 / 1 天 / 1 周 / 4 周）估算是否仍在冷却期。缺点：只是估算，看不到 Google 侧的真实状态，用户清除站点数据或换设备就会失准</li><li class="en"><b>Record the dismissal time in the front end (inference)</b>: when the user closes One Tap (<code>isSkippedMoment()</code> with <code>getSkippedReason()</code> equal to <code>user_cancel</code> in the callback), store the time and a running count locally, then estimate whether it is still on cooldown with the ladder above (2 hours / 1 day / 1 week / 4 weeks). Downside: it is only an estimate, you cannot see Google’s real state, and it drifts if the user clears site data or switches devices</li>
+        <li class="zh"><b>不判断，直接试</b>：每次先调用 <code>prompt()</code>，如果没有弹出（通知为未显示，或等待一小段时间仍无反应），就直接改用 OAuth 弹窗。最简单，代价是需要设一个超时，可能有短暂的等待</li><li class="en"><b>Do not judge, just try</b>: always call <code>prompt()</code> first and, if nothing is shown (the notification says not displayed, or nothing happens after a short wait), switch straight to the OAuth popup. The simplest option; the cost is that you need a timeout and there may be a brief wait</li>
+    </ol>
+    <div class="note"><div class="zh">以上是通用做法，<b>并不是 WSOP 的实际实现</b>，WSOP 具体怎么判断冷却期目前未知。这也是对比表里"方案 3（Authorization Code）"更受青睐的原因之一：它不依赖 One Tap，就不需要判断冷却期。</div><div class="en">These are general approaches and <b>not WSOP’s actual implementation</b>; how WSOP detects the cooldown is not known. It is also one reason Approach 3 (Authorization Code) in the comparison table is preferred: it does not rely on One Tap, so there is no cooldown to detect.</div></div>
+  </div>
+
   <div class="flow" id="flow">
     <h3><span class="zh">前端保持登录的完整流程</span><span class="en">Complete flow: keeping the user signed in</span></h3>
     <p class="zh muted">前端启动时先看本地有没有后端签发的会话令牌：有就直接用它登录，没有（或被拒绝）才弹出 Google 授权。</p><p class="en muted">On startup the front end first checks for a session token issued by the backend: if there is one it logs in with it directly; only when there is none (or it is rejected) does it open the Google authorization popup.</p>

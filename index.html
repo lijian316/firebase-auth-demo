@@ -260,7 +260,7 @@
         <li class="zh"><b>优先采用 One Tap</b>：页面加载时调用 <code>prompt()</code>，自动弹出 Google 账号选择卡片</li><li class="en"><b>One Tap first</b>: on page load it calls <code>prompt()</code> to show the Google account chooser card automatically</li>
         <li class="zh">用户点击关闭 One Tap 授权之后，改用 <b>OAuth 弹窗</b>形式登录（点页面上的「GOOGLE SIGN-IN」按钮触发）</li><li class="en">After the user closes the One Tap card, sign-in switches to the <b>OAuth popup</b> (triggered by the “GOOGLE SIGN-IN” button on the page)</li>
         <li class="zh">OAuth 弹窗形式下，保持登录由前端直接缓存的 <code>google_idtoken</code> 实现，可保持 <b>1 小时</b>的登录</li><li class="en">In the OAuth popup flow, staying signed in relies on the <code>google_idtoken</code> cached directly by the front end, which keeps the user logged in for <b>1 hour</b></li>
-        <li class="zh">之后再次进入，仍然<b>先判断能否使用 One Tap</b>：可以就继续 One Tap；不行（处于冷却期）才用 OAuth 弹窗。判断是否处于冷却期的方式，详见<a href="approaches.html">对比页</a></li><li class="en">On later visits it still <b>checks first whether One Tap can be used</b>: if so, One Tap continues; if not (on cooldown), the OAuth popup is used. How to tell whether One Tap is on cooldown is detailed on <a href="approaches.html">the comparison page</a></li>
+        <li class="zh">之后再次进入，仍然<b>先判断能否使用 One Tap</b>：可以就继续 One Tap；不行（处于冷却期）才用 OAuth 弹窗。判断是否处于冷却期的方式，详见<a href="approaches.html#cooldown">对比页</a></li><li class="en">On later visits it still <b>checks first whether One Tap can be used</b>: if so, One Tap continues; if not (on cooldown), the OAuth popup is used. How to tell whether One Tap is on cooldown is detailed on <a href="approaches.html#cooldown">the comparison page</a></li>
       </ol>
 
       <div class="shot-grid">
