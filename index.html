@@ -322,9 +322,7 @@
       <div class="conclusion-badge alt"><span class="zh">✓ 支持 Google 登录 · 网页版用 Google 官方按钮，iPhone 用网页弹出，未使用 Firebase</span><span class="en">✓ Google sign-in supported · Official Google button on the web, web popup on iPhone, no Firebase</span></div>
 
       <h3><span class="zh">网页版：渲染 Google 官方登录按钮</span><span class="en">Web version: renders the official Google sign-in button</span></h3>
-      <p class="zh muted">登录页上的 Google 按钮不是网站自己画的，而是由 Google 的脚本渲染出来的官方按钮。判断依据有两条：</p><p class="en muted">The Google button on the sign-in page is not drawn by the site itself; it is an official button rendered by Google’s script. Two things give it away:</p>
       <ul class="evidence-list">
-        <li class="zh">样式是<b>个性化</b>的：「用 zane 的身份登录」+ 邮箱 + G 图标。这是 Google 根据浏览器里已登录的 Google 账号自动生成的，网站自己拿不到这些信息，没法自己画</li><li class="en">The style is <b>personalized</b>: “Sign in as zane” + email + G logo. Google generates it from the Google account signed in to the browser; the site has no access to that information and cannot draw it itself</li>
         <li class="zh">DevTools 的 Application 面板里，这个按钮对应一个来自 <code>accounts.google.com</code> 的<b>第三方 iframe</b>（Is third-party: Yes）</li><li class="en">In the DevTools Application panel, the button corresponds to a <b>third-party iframe</b> from <code>accounts.google.com</code> (Is third-party: Yes)</li>
       </ul>
       <div class="shot-grid" style="grid-template-columns: minmax(0, 1fr);">
