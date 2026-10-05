@@ -255,8 +255,13 @@
       </div>
       <div class="conclusion-badge alt"><span class="zh">✓ One Tap + Google Identity Services（平台自己维护，非 Firebase）</span><span class="en">✓ One Tap + Google Identity Services (maintained by the platform itself, not Firebase)</span></div>
 
-      <h3><span class="zh">登录交互：先 One Tap，冷却后用弹窗</span><span class="en">Sign-in interaction: One Tap first, popup once it is on cooldown</span></h3>
-      <p class="zh muted">页面加载时先调用 One Tap（<code>prompt()</code>）自动弹出账号卡片；用户关闭后 One Tap 进入冷却、不再自动弹出，之后只能点页面上的「GOOGLE SIGN-IN」按钮，改走 OAuth 弹窗登录。两条入口都是 WSOP 前端自己实现的（按钮从页面加载起就在），不是 GIS 库自动降级。</p><p class="en muted">On page load it first calls One Tap (<code>prompt()</code>) to show the account chooser card automatically; once the user dismisses it, One Tap enters its cooldown and stops popping up, so the user has to click the “GOOGLE SIGN-IN” button on the page, which opens an OAuth popup instead. Both entry points are implemented by WSOP’s own front end (the button exists from page load); it is not an automatic fallback by the GIS library.</p>
+      <h3><span class="zh">登录交互：优先 One Tap，关闭后改用 OAuth 弹窗</span><span class="en">Sign-in interaction: One Tap first, OAuth popup after it is closed</span></h3>
+      <ol class="evidence-list">
+        <li class="zh"><b>优先采用 One Tap</b>：页面加载时调用 <code>prompt()</code>，自动弹出 Google 账号选择卡片</li><li class="en"><b>One Tap first</b>: on page load it calls <code>prompt()</code> to show the Google account chooser card automatically</li>
+        <li class="zh">用户点击关闭 One Tap 授权之后，改用 <b>OAuth 弹窗</b>形式登录（点页面上的「GOOGLE SIGN-IN」按钮触发）</li><li class="en">After the user closes the One Tap card, sign-in switches to the <b>OAuth popup</b> (triggered by the “GOOGLE SIGN-IN” button on the page)</li>
+        <li class="zh">OAuth 弹窗形式下，保持登录由前端直接缓存的 <code>google_idtoken</code> 实现，可保持 <b>1 小时</b>的登录</li><li class="en">In the OAuth popup flow, staying signed in relies on the <code>google_idtoken</code> cached directly by the front end, which keeps the user logged in for <b>1 hour</b></li>
+        <li class="zh">之后再次进入，仍然<b>先判断能否使用 One Tap</b>：可以就继续 One Tap；不行（处于冷却期）才用 OAuth 弹窗。判断是否处于冷却期的方式，详见<a href="approaches.html">对比页</a></li><li class="en">On later visits it still <b>checks first whether One Tap can be used</b>: if so, One Tap continues; if not (on cooldown), the OAuth popup is used. How to tell whether One Tap is on cooldown is detailed on <a href="approaches.html">the comparison page</a></li>
+      </ol>
 
       <div class="shot-grid">
         <div class="shot">
