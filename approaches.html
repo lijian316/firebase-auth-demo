@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>方案二细分：三种实现方式对比</title>
+<title>方案二细分：四种实现方式对比</title>
 <script>(function(){var l=null;try{l=localStorage.getItem('lang')}catch(e){}if(!l)l=(navigator.language||'').toLowerCase().indexOf('zh')===0?'zh':'en';document.documentElement.lang=l==='en'?'en':'zh-CN';})();</script>
 <style>
   :root {
@@ -48,21 +48,6 @@
 
   .main { max-width: 880px; margin: 0 auto; padding: 32px 24px 80px; }
   p.muted { color: var(--muted); font-size: 13.5px; margin-bottom: 12px; }
-  .cmp-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
-  table.cmp { width: 100%; border-collapse: collapse; min-width: 600px; }
-  table.cmp th, table.cmp td { padding: 11px 14px; text-align: left; font-size: 13px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); vertical-align: middle; }
-  table.cmp th:last-child, table.cmp td:last-child { border-right: none; }
-  table.cmp tr:last-child td { border-bottom: none; }
-  table.cmp thead th { background: var(--code-bg); font-size: 13px; }
-  table.cmp .rowlabel { background: var(--code-bg); font-weight: 600; font-size: 12.5px; width: 22%; }
-  table.cmp .recol { background: #f4fbf7; }
-  table.cmp thead th.recol { background: #e3f4ea; }
-  table.cmp .win { color: var(--ok); font-weight: 600; }
-  table.cmp .lose { color: var(--muted); }
-  table.cmp .th-num { display: block; font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
-  table.cmp .th-tag { display: inline-block; margin-top: 5px; font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 8px; background: #fff; color: var(--muted); border: 1px solid var(--border); }
-  table.cmp .th-tag.ok { background: var(--ok-bg); color: var(--ok); border-color: transparent; }
-  table.cmp .th-tag.warn { background: #fdecec; color: #b13a3a; border-color: transparent; }
   footer { text-align: center; color: var(--muted); font-size: 12px; padding: 30px 0 10px; }
 
 
@@ -98,6 +83,26 @@
   .cd .steps div:last-child { border-bottom: none; }
   .cd .steps b { color: #b13a3a; font-variant-numeric: tabular-nums; }
   .cd .note { margin-top: 14px; background: #fff8e6; border: 1px solid #f0dca0; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #6b5416; }
+
+  .ap-list { display: flex; flex-direction: column; gap: 14px; margin-top: 4px; }
+  .ap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
+  .ap.rec { border-color: #9fd6bb; background: #f7fcf9; }
+  .ap-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  .ap-num { font-size: 11px; font-weight: 700; color: var(--accent); background: var(--accent-bg); padding: 2px 9px; border-radius: 8px; }
+  .ap-name { font-size: 15px; font-weight: 700; }
+  .ap-tag { font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 10px; background: var(--code-bg); color: var(--muted); }
+  .ap-tag.ok { background: var(--ok-bg); color: var(--ok); }
+  .ap-tag.warn { background: #fdecec; color: #b13a3a; }
+  .ap-tag.mid { background: #fdf1de; color: #b8860b; }
+  .ap ul { list-style: none; margin: 0; padding: 0; }
+  .ap li { display: flex; gap: 12px; padding: 7px 0; border-top: 1px dashed var(--border); font-size: 13.5px; }
+  .ap li:first-child { border-top: none; }
+  .ap li .k { flex: 0 0 170px; color: var(--muted); font-weight: 600; font-size: 12.5px; }
+  .ap li .v { flex: 1; min-width: 0; }
+  .ap li .v.win { color: var(--ok); font-weight: 600; }
+  .ap li .v.lose { color: var(--muted); }
+  .ap-note { margin-top: 10px; font-size: 12.5px; color: #6b5416; background: #fff8e6; border: 1px solid #f0dca0; border-radius: 8px; padding: 8px 12px; }
+  @media (max-width: 560px) { .ap li { flex-direction: column; gap: 2px; } .ap li .k { flex: none; } }
 </style>
 </head>
 <body>
@@ -105,35 +110,68 @@
 <div class="hero">
   <div class="hero-inner">
     <div class="lang-switch"><button type="button" data-lang="zh">中文</button><button type="button" data-lang="en">EN</button></div>
-    <div class="hero-title"><span class="zh">方案二细分：三种实现方式对比</span><span class="en">Option 2 breakdown: comparing the three approaches</span></div>
+    <div class="hero-title"><span class="zh">方案二细分：四种实现方式对比</span><span class="en">Option 2 breakdown: comparing the four approaches</span></div>
     <div class="hero-sub"><span class="zh">Google 登录 · 自研维持登录方案</span><span class="en">Google Sign-In · Self-built session persistence</span></div>
     <a class="back" href="./#recommendation"><span class="zh">← 返回 Google 登录方案分析</span><span class="en">← Back to the Google login analysis</span></a>
   </div>
 </div>
 
 <div class="main">
-  <div class="cmp-wrap">
-            <table class="cmp">
-              <thead>
-                <tr>
-                  <th></th>
-                  <th><span class="th-num"><span class="zh">方案 1</span><span class="en">Approach 1</span></span>ID Token<br><span class="th-tag"><span class="zh">现状</span><span class="en">Current</span></span></th>
-                  <th><span class="th-num"><span class="zh">方案 2</span><span class="en">Approach 2</span></span>Access Token<br><span class="th-tag warn"><span class="zh">不推荐</span><span class="en">Not recommended</span></span></th>
-                  <th class="recol"><span class="th-num"><span class="zh">方案 3</span><span class="en">Approach 3</span></span>Authorization Code<br><span class="th-tag ok"><span class="zh">推荐</span><span class="en">Recommended</span></span></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td class="rowlabel"><span class="zh">触发 API</span><span class="en">Trigger API</span></td><td><code>accounts.id.prompt()</code></td><td><code>oauth2.initTokenClient()</code></td><td class="recol"><code>oauth2.initCodeClient()</code></td></tr>
-                <tr><td class="rowlabel"><span class="zh">弹窗形式</span><span class="en">Popup type</span></td><td class="lose"><span class="zh">页内自动卡片</span><span class="en">Automatic in-page card</span></td><td><span class="zh">独立弹窗</span><span class="en">Independent popup</span></td><td class="recol win"><span class="zh">独立弹窗</span><span class="en">Independent popup</span></td></tr>
-                <tr><td class="rowlabel"><span class="zh">受 One Tap 冷却影响</span><span class="en">Subject to One Tap cooldown</span></td><td class="lose"><span class="zh">是</span><span class="en">Yes</span></td><td class="win"><span class="zh">否</span><span class="en">No</span></td><td class="recol win"><span class="zh">否</span><span class="en">No</span></td></tr>
-                <tr><td class="rowlabel"><span class="zh">前端直接拿到</span><span class="en">Frontend gets directly</span></td><td><code>id_token</code> (JWT)</td><td><code>access_token</code><span class="zh">（不透明字符串）</span><span class="en"> (opaque string)</span></td><td class="recol"><code>code</code><span class="zh">（一次性凭证）</span><span class="en"> (one-time credential)</span></td></tr>
-                <tr><td class="rowlabel"><span class="zh">含可验证的 id_token</span><span class="en">Includes a verifiable id_token</span></td><td class="win"><span class="zh">是</span><span class="en">Yes</span></td><td class="lose"><span class="zh">否</span><span class="en">No</span></td><td class="recol win"><span class="zh">是（换取结果里含）</span><span class="en">Yes (included in the exchange result)</span></td></tr>
-                <tr><td class="rowlabel"><span class="zh">换取步骤在哪</span><span class="en">Where the exchange happens</span></td><td><span class="zh">无需换取</span><span class="en">No exchange needed</span></td><td><span class="zh">无需换取</span><span class="en">No exchange needed</span></td><td class="recol"><span class="zh">后端用 <code>client_secret</code> 换</span><span class="en">Backend, via <code>client_secret</code></span></td></tr>
-                <tr><td class="rowlabel"><span class="zh">后端校验要改</span><span class="en">Backend verification needs rewriting</span></td><td>—</td><td class="lose"><span class="zh">要重写</span><span class="en">Yes, must be rewritten</span></td><td class="recol win"><span class="zh">不用改，复用现有</span><span class="en">No, reuses existing logic</span></td></tr>
-                <tr><td class="rowlabel"><span class="zh">能否保持登录</span><span class="en">Can keep the user signed in</span></td><td class="lose"><span class="zh">否：id_token 约 1 小时过期，没有 refresh token，需自建会话维持登录</span><span class="en">No: the id_token expires in about 1 hour and there is no refresh token; you need your own session to stay signed in</span></td><td class="lose"><span class="zh">否：access_token 约 1 小时过期，浏览器端拿不到 refresh token，需自建会话</span><span class="en">No: the access_token expires in about 1 hour and the browser gets no refresh token; you need your own session</span></td><td class="recol win"><span class="zh">是：后端换取时可拿到 refresh_token，服务端可静默续期，无需用户再次授权</span><span class="en">Yes: the backend can obtain a refresh_token during the exchange and renew silently on the server, without asking the user again</span></td></tr>
-          </tbody>
-            </table>
-          </div>
+  <div class="ap-list">
+    <div class="ap">
+      <div class="ap-head"><span class="ap-num"><span class="zh">方案 1</span><span class="en">Approach 1</span></span><span class="ap-name">One Tap</span><span class="ap-tag "><span class="zh">现状</span><span class="en">Current</span></span></div>
+      <ul>
+        <li><span class="k"><span class="zh">触发 API</span><span class="en">Trigger API</span></span><span class="v "><span class="zh"><code>accounts.id.prompt()</code></span><span class="en"><code>accounts.id.prompt()</code></span></span></li>
+        <li><span class="k"><span class="zh">弹窗形式</span><span class="en">Popup type</span></span><span class="v lose"><span class="zh">页内自动卡片</span><span class="en">Automatic in-page card</span></span></li>
+        <li><span class="k"><span class="zh">受 One Tap 冷却影响</span><span class="en">Subject to One Tap cooldown</span></span><span class="v lose"><span class="zh">是</span><span class="en">Yes</span></span></li>
+        <li><span class="k"><span class="zh">前端直接拿到</span><span class="en">Frontend gets directly</span></span><span class="v "><span class="zh"><code>id_token</code> (JWT)</span><span class="en"><code>id_token</code> (JWT)</span></span></li>
+        <li><span class="k"><span class="zh">含可验证的 id_token</span><span class="en">Includes a verifiable id_token</span></span><span class="v win"><span class="zh">是</span><span class="en">Yes</span></span></li>
+        <li><span class="k"><span class="zh">换取步骤在哪</span><span class="en">Where the exchange happens</span></span><span class="v "><span class="zh">无需换取</span><span class="en">No exchange needed</span></span></li>
+        <li><span class="k"><span class="zh">后端校验要改</span><span class="en">Backend verification needs rewriting</span></span><span class="v "><span class="zh">无需改动</span><span class="en">No change needed</span></span></li>
+        <li><span class="k"><span class="zh">能否保持登录</span><span class="en">Can keep the user signed in</span></span><span class="v lose"><span class="zh">否：id_token 约 1 小时过期，没有 refresh token，需自建会话维持登录</span><span class="en">No: the id_token expires in about 1 hour and there is no refresh token; you need your own session to stay signed in</span></span></li>
+      </ul>
+    </div>
+    <div class="ap">
+      <div class="ap-head"><span class="ap-num"><span class="zh">方案 2</span><span class="en">Approach 2</span></span><span class="ap-name">Access Token</span><span class="ap-tag warn"><span class="zh">不推荐</span><span class="en">Not recommended</span></span></div>
+      <ul>
+        <li><span class="k"><span class="zh">触发 API</span><span class="en">Trigger API</span></span><span class="v "><span class="zh"><code>oauth2.initTokenClient()</code></span><span class="en"><code>oauth2.initTokenClient()</code></span></span></li>
+        <li><span class="k"><span class="zh">弹窗形式</span><span class="en">Popup type</span></span><span class="v "><span class="zh">独立弹窗</span><span class="en">Independent popup</span></span></li>
+        <li><span class="k"><span class="zh">受 One Tap 冷却影响</span><span class="en">Subject to One Tap cooldown</span></span><span class="v win"><span class="zh">否</span><span class="en">No</span></span></li>
+        <li><span class="k"><span class="zh">前端直接拿到</span><span class="en">Frontend gets directly</span></span><span class="v "><span class="zh"><code>access_token</code>（不透明字符串）</span><span class="en"><code>access_token</code> (opaque string)</span></span></li>
+        <li><span class="k"><span class="zh">含可验证的 id_token</span><span class="en">Includes a verifiable id_token</span></span><span class="v lose"><span class="zh">否</span><span class="en">No</span></span></li>
+        <li><span class="k"><span class="zh">换取步骤在哪</span><span class="en">Where the exchange happens</span></span><span class="v "><span class="zh">无需换取</span><span class="en">No exchange needed</span></span></li>
+        <li><span class="k"><span class="zh">后端校验要改</span><span class="en">Backend verification needs rewriting</span></span><span class="v lose"><span class="zh">要重写</span><span class="en">Yes, must be rewritten</span></span></li>
+        <li><span class="k"><span class="zh">能否保持登录</span><span class="en">Can keep the user signed in</span></span><span class="v lose"><span class="zh">否：access_token 约 1 小时过期，浏览器端拿不到 refresh token，需自建会话</span><span class="en">No: the access_token expires in about 1 hour and the browser gets no refresh token; you need your own session</span></span></li>
+      </ul>
+    </div>
+    <div class="ap rec">
+      <div class="ap-head"><span class="ap-num"><span class="zh">方案 3</span><span class="en">Approach 3</span></span><span class="ap-name">Authorization Code</span><span class="ap-tag ok"><span class="zh">推荐</span><span class="en">Recommended</span></span></div>
+      <ul>
+        <li><span class="k"><span class="zh">触发 API</span><span class="en">Trigger API</span></span><span class="v "><span class="zh"><code>oauth2.initCodeClient()</code></span><span class="en"><code>oauth2.initCodeClient()</code></span></span></li>
+        <li><span class="k"><span class="zh">弹窗形式</span><span class="en">Popup type</span></span><span class="v win"><span class="zh">独立弹窗</span><span class="en">Independent popup</span></span></li>
+        <li><span class="k"><span class="zh">受 One Tap 冷却影响</span><span class="en">Subject to One Tap cooldown</span></span><span class="v win"><span class="zh">否</span><span class="en">No</span></span></li>
+        <li><span class="k"><span class="zh">前端直接拿到</span><span class="en">Frontend gets directly</span></span><span class="v "><span class="zh"><code>code</code>（一次性凭证）</span><span class="en"><code>code</code> (one-time credential)</span></span></li>
+        <li><span class="k"><span class="zh">含可验证的 id_token</span><span class="en">Includes a verifiable id_token</span></span><span class="v win"><span class="zh">是（换取结果里含）</span><span class="en">Yes (included in the exchange result)</span></span></li>
+        <li><span class="k"><span class="zh">换取步骤在哪</span><span class="en">Where the exchange happens</span></span><span class="v "><span class="zh">后端用 <code>client_secret</code> 换</span><span class="en">Backend, via <code>client_secret</code></span></span></li>
+        <li><span class="k"><span class="zh">后端校验要改</span><span class="en">Backend verification needs rewriting</span></span><span class="v win"><span class="zh">不用改，复用现有</span><span class="en">No, reuses existing logic</span></span></li>
+        <li><span class="k"><span class="zh">能否保持登录</span><span class="en">Can keep the user signed in</span></span><span class="v win"><span class="zh">是：后端换取时可拿到 refresh_token，服务端可静默续期，无需用户再次授权</span><span class="en">Yes: the backend can obtain a refresh_token during the exchange and renew silently on the server, without asking the user again</span></span></li>
+      </ul>
+    </div>
+    <div class="ap">
+      <div class="ap-head"><span class="ap-num"><span class="zh">方案 4</span><span class="en">Approach 4</span></span><span class="ap-name">One Tap + Authorization Code</span><span class="ap-tag mid"><span class="zh">不太建议</span><span class="en">Less recommended</span></span></div>
+      <ul>
+        <li><span class="k"><span class="zh">触发 API</span><span class="en">Trigger API</span></span><span class="v "><span class="zh">平时 <code>accounts.id.prompt()</code>，冷却期间 <code>oauth2.initCodeClient()</code></span><span class="en">Normally <code>accounts.id.prompt()</code>; during the cooldown <code>oauth2.initCodeClient()</code></span></span></li>
+        <li><span class="k"><span class="zh">弹窗形式</span><span class="en">Popup type</span></span><span class="v "><span class="zh">平时页内自动卡片，冷却期间独立弹窗</span><span class="en">Automatic in-page card normally; independent popup during the cooldown</span></span></li>
+        <li><span class="k"><span class="zh">受 One Tap 冷却影响</span><span class="en">Subject to One Tap cooldown</span></span><span class="v "><span class="zh">部分：靠冷却期间切换到方案 3 来绕开</span><span class="en">Partly: avoided by switching to Approach 3 during the cooldown</span></span></li>
+        <li><span class="k"><span class="zh">前端直接拿到</span><span class="en">Frontend gets directly</span></span><span class="v "><span class="zh">平时 <code>id_token</code>，冷却期间 <code>code</code></span><span class="en"><code>id_token</code> normally; <code>code</code> during the cooldown</span></span></li>
+        <li><span class="k"><span class="zh">含可验证的 id_token</span><span class="en">Includes a verifiable id_token</span></span><span class="v win"><span class="zh">是（两条路径最终都有）</span><span class="en">Yes (both paths end up with one)</span></span></li>
+        <li><span class="k"><span class="zh">换取步骤在哪</span><span class="en">Where the exchange happens</span></span><span class="v "><span class="zh">平时无需换取；冷却期间后端用 <code>client_secret</code> 换</span><span class="en">None normally; during the cooldown the backend exchanges via <code>client_secret</code></span></span></li>
+        <li><span class="k"><span class="zh">后端校验要改</span><span class="en">Backend verification needs rewriting</span></span><span class="v "><span class="zh">校验逻辑复用现有，但要为冷却路径新增 code 换取接口（同方案 3）</span><span class="en">Verification logic is reused, but a code-exchange endpoint must be added for the cooldown path (same as Approach 3)</span></span></li>
+        <li><span class="k"><span class="zh">能否保持登录</span><span class="en">Can keep the user signed in</span></span><span class="v "><span class="zh">走 One Tap 路径时需自建会话；走方案 3 路径时可拿到 refresh_token 静默续期</span><span class="en">On the One Tap path you need your own session; on the Approach 3 path a refresh_token allows silent renewal</span></span></li>
+      </ul>
+      <div class="ap-note"><span class="zh">是否处于冷却期没有官方 API 可以判断，只能靠非官方信号推断（详见下方「如何判断 One Tap 是否处于冷却期」）；而方案 3 能让 Google 登录在形式和体验上与 Apple、Facebook 登录保持一致，所以不太建议这个混合方案。</span><span class="en">There is no official API to tell whether the cooldown is in effect; it can only be inferred from unofficial signals (see “How to tell whether One Tap is on cooldown” below). Approach 3 also keeps Google sign-in visually and behaviorally consistent with Apple and Facebook sign-in, so this hybrid is less recommended.</span></div>
+    </div>
+  </div>
           <p class="zh muted" style="margin-top:12px">Access Token 方案会把"Google 签名担保身份"降级成"客户端自己上报的数据"，安全性下降，所以推荐采用 Authorization Code 方案。</p><p class="en muted" style="margin-top:12px">The Access Token approach downgrades “an identity Google vouches for” to “data the client self-reports” — a real drop in security — so Authorization Code is the recommended approach.</p>
   <div class="cd" id="cooldown">
     <h3><span class="zh">如何判断 One Tap 是否处于冷却期</span><span class="en">How to tell whether One Tap is on cooldown</span></h3>
@@ -150,7 +188,7 @@
         <li class="zh"><b>前端自己记录关闭时间（推断）</b>：用户关闭 One Tap 时（回调里 <code>isSkippedMoment()</code> 且 <code>getSkippedReason()</code> 为 <code>user_cancel</code>），在本地记下时间和累计次数，再按上面的阶梯（2 小时 / 1 天 / 1 周 / 4 周）估算是否仍在冷却期。缺点：只是估算，看不到 Google 侧的真实状态，用户清除站点数据或换设备就会失准</li><li class="en"><b>Record the dismissal time in the front end (inference)</b>: when the user closes One Tap (<code>isSkippedMoment()</code> with <code>getSkippedReason()</code> equal to <code>user_cancel</code> in the callback), store the time and a running count locally, then estimate whether it is still on cooldown with the ladder above (2 hours / 1 day / 1 week / 4 weeks). Downside: it is only an estimate, you cannot see Google’s real state, and it drifts if the user clears site data or switches devices</li>
         <li class="zh"><b>不判断，直接试</b>：每次先调用 <code>prompt()</code>，如果没有弹出（通知为未显示，或等待一小段时间仍无反应），就直接改用 OAuth 弹窗。最简单，代价是需要设一个超时，可能有短暂的等待</li><li class="en"><b>Do not judge, just try</b>: always call <code>prompt()</code> first and, if nothing is shown (the notification says not displayed, or nothing happens after a short wait), switch straight to the OAuth popup. The simplest option; the cost is that you need a timeout and there may be a brief wait</li>
     </ol>
-    <div class="note"><div class="zh">以上是通用做法，<b>并不是 WSOP 的实际实现</b>，WSOP 具体怎么判断冷却期目前未知。这也是对比表里"方案 3（Authorization Code）"更受青睐的原因之一：它不依赖 One Tap，就不需要判断冷却期。</div><div class="en">These are general approaches and <b>not WSOP’s actual implementation</b>; how WSOP detects the cooldown is not known. It is also one reason Approach 3 (Authorization Code) in the comparison table is preferred: it does not rely on One Tap, so there is no cooldown to detect.</div></div>
+    <div class="note"><div class="zh">以上是通用做法，<b>并不是 WSOP 的实际实现</b>，WSOP 具体怎么判断冷却期目前未知。这也是上面对比里"方案 3（Authorization Code）"更受青睐的原因之一：它不依赖 One Tap，就不需要判断冷却期。</div><div class="en">These are general approaches and <b>not WSOP’s actual implementation</b>; how WSOP detects the cooldown is not known. It is also one reason Approach 3 (Authorization Code) in the comparison above is preferred: it does not rely on One Tap, so there is no cooldown to detect.</div></div>
   </div>
 
   <div class="flow" id="flow">
@@ -218,7 +256,7 @@
 <footer><span class="zh">Firebase Auth Demo · Google 登录方案分析</span><span class="en">Firebase Auth Demo · Google Login Solution Analysis</span></footer>
 
 <script>
-  const TITLES = { zh: '方案二细分：三种实现方式对比', en: 'Option 2 breakdown: comparing the three approaches' };
+  const TITLES = { zh: '方案二细分：四种实现方式对比', en: 'Option 2 breakdown: comparing the four approaches' };
   function setLang(lang) {
     document.documentElement.lang = lang === 'en' ? 'en' : 'zh-CN';
     document.title = TITLES[lang];
