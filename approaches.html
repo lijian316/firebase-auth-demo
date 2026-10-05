@@ -64,6 +64,16 @@
   table.cmp .th-tag.ok { background: var(--ok-bg); color: var(--ok); border-color: transparent; }
   table.cmp .th-tag.warn { background: #fdecec; color: #b13a3a; border-color: transparent; }
   footer { text-align: center; color: var(--muted); font-size: 12px; padding: 30px 0 10px; }
+
+  .example { margin-top: 36px; }
+  .example h3 { font-size: 16px; margin: 0 0 6px; }
+  .step-title { font-size: 13.5px; font-weight: 700; margin: 20px 0 6px; }
+  .step-title .num { display: inline-block; width: 20px; height: 20px; line-height: 20px; text-align: center; border-radius: 50%; background: var(--accent); color: #fff; font-size: 11px; margin-right: 8px; }
+  .codeblock { background: #161a20; color: #dce3e8; border-radius: 10px; padding: 14px 16px; font-family: 'SF Mono', 'Fira Code', Consolas, monospace; font-size: 12.5px; line-height: 1.75; overflow-x: auto; white-space: pre; }
+  .codeblock .k { color: #e0a83e; }
+  .codeblock .v { color: #8fd0a8; }
+  .codeblock .c { color: #7c8794; }
+  .callout { margin-top: 18px; background: #fff8e6; border: 1px solid #f0dca0; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #6b5416; }
 </style>
 </head>
 <body>
@@ -101,6 +111,60 @@
             </table>
           </div>
           <p class="zh muted" style="margin-top:12px">Access Token 方案会把"Google 签名担保身份"降级成"客户端自己上报的数据"，安全性下降，所以推荐采用 Authorization Code 方案。</p><p class="en muted" style="margin-top:12px">The Access Token approach downgrades “an identity Google vouches for” to “data the client self-reports” — a real drop in security — so Authorization Code is the recommended approach.</p>
+  <div class="example" id="example">
+    <h3><span class="zh">示例：Authorization Code 方案如何拿到并使用 refresh_token</span><span class="en">Example: obtaining and using a refresh_token with the Authorization Code approach</span></h3>
+    <p class="zh muted">下面是一个最小流程示意（代码里的 ID、令牌都是占位符，不是真实凭据）：前端只负责拿到一次性 code，refresh_token 全程只在后端。</p><p class="en muted">A minimal walkthrough (IDs and tokens in the code are placeholders, not real credentials): the front end only obtains a one-time code, and the refresh_token never leaves the backend.</p>
+
+    <div class="step-title"><span class="num">1</span><span class="zh">前端：弹窗授权，拿到一次性 code</span><span class="en">Front end: authorize in a popup and get a one-time code</span></div>
+    <div class="codeblock"><span class="c zh">// 在按钮点击事件里调用</span><span class="c en">// call this from a button click handler</span>
+<span class="k">const</span> client = google.accounts.oauth2.initCodeClient({
+  client_id: <span class="v">'YOUR_CLIENT_ID.apps.googleusercontent.com'</span>,
+  scope: <span class="v">'openid email profile'</span>,
+  ux_mode: <span class="v">'popup'</span>,
+  callback: (resp) => {
+    <span class="c zh">// resp.code 是一次性凭证，只发给自己的后端</span><span class="c en">// resp.code is a one-time credential; send it only to your own backend</span>
+    fetch(<span class="v">'/auth/google/exchange'</span>, { method: <span class="v">'POST'</span>, body: JSON.stringify({ code: resp.code }) });
+  },
+});
+client.requestCode();</div>
+
+    <div class="step-title"><span class="num">2</span><span class="zh">后端：用 code 换令牌，保存 refresh_token</span><span class="en">Backend: exchange the code for tokens and store the refresh_token</span></div>
+    <div class="codeblock"><span class="k">POST</span> https://oauth2.googleapis.com/token
+code=<span class="v">CODE_FROM_CLIENT</span>
+client_id=<span class="v">YOUR_CLIENT_ID</span>
+client_secret=<span class="v">YOUR_CLIENT_SECRET</span>   <span class="c zh">// 只在后端，绝不能给前端</span><span class="c en">// backend only, never expose to the front end</span>
+redirect_uri=<span class="v">postmessage</span>            <span class="c zh">// 弹窗模式固定写这个字面量</span><span class="c en">// literal value required for popup mode</span>
+grant_type=<span class="v">authorization_code</span>
+
+<span class="c zh">// 响应</span><span class="c en">// response</span>
+{
+  <span class="k">"access_token"</span>:  <span class="v">"ya29.a0A..."</span>,
+  <span class="k">"expires_in"</span>:    <span class="v">3599</span>,
+  <span class="k">"refresh_token"</span>: <span class="v">"1//0gXXXX..."</span>,   <span class="c zh">// 用户首次授权时才会下发，存到后端（加密）</span><span class="c en">// only issued when the user first grants consent; store it server-side (encrypted)</span>
+  <span class="k">"scope"</span>:         <span class="v">"openid email profile"</span>,
+  <span class="k">"token_type"</span>:    <span class="v">"Bearer"</span>,
+  <span class="k">"id_token"</span>:      <span class="v">"eyJhbGciOiJSUzI1NiIs..."</span>   <span class="c zh">// 验签后确认用户身份，再签发自己的登录会话</span><span class="c en">// verify it to confirm the user, then issue your own login session</span>
+}</div>
+
+    <div class="step-title"><span class="num">3</span><span class="zh">后端：令牌过期后静默续期，不需要用户再操作</span><span class="en">Backend: renew silently after the tokens expire, with no user action</span></div>
+    <div class="codeblock"><span class="k">POST</span> https://oauth2.googleapis.com/token
+client_id=<span class="v">YOUR_CLIENT_ID</span>
+client_secret=<span class="v">YOUR_CLIENT_SECRET</span>
+refresh_token=<span class="v">1//0gXXXX...</span>
+grant_type=<span class="v">refresh_token</span>
+
+<span class="c zh">// 响应：拿到新的令牌，全程没有弹窗</span><span class="c en">// response: fresh tokens, no popup involved</span>
+{
+  <span class="k">"access_token"</span>: <span class="v">"ya29.a0A... (new)"</span>,
+  <span class="k">"expires_in"</span>:   <span class="v">3599</span>,
+  <span class="k">"scope"</span>:        <span class="v">"openid email profile"</span>,
+  <span class="k">"token_type"</span>:   <span class="v">"Bearer"</span>,
+  <span class="k">"id_token"</span>:     <span class="v">"eyJhbGciOiJSUzI1NiIs... (new)"</span>
+}</div>
+
+    <div class="callout"><div class="zh">⚠️ refresh_token 不是永久有效：用户在 Google 账号里撤销授权、或者长期（约 6 个月）没有使用，续期时会返回 <code>invalid_grant</code>，这时需要让用户重新登录一次。</div><div class="en">⚠️ A refresh_token is not valid forever: if the user revokes access in their Google account, or it goes unused for a long time (about 6 months), the renewal request returns <code>invalid_grant</code> and the user has to sign in again.</div></div>
+  </div>
+
 </div>
 
 <footer><span class="zh">Firebase Auth Demo · Google 登录方案分析</span><span class="en">Firebase Auth Demo · Google Login Solution Analysis</span></footer>
