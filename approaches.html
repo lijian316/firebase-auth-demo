@@ -65,38 +65,29 @@
   table.cmp .th-tag.warn { background: #fdecec; color: #b13a3a; border-color: transparent; }
   footer { text-align: center; color: var(--muted); font-size: 12px; padding: 30px 0 10px; }
 
-  .example { margin-top: 36px; }
-  .example h3 { font-size: 16px; margin: 0 0 6px; }
-  .step-title { font-size: 13.5px; font-weight: 700; margin: 20px 0 6px; }
-  .step-title .num { display: inline-block; width: 20px; height: 20px; line-height: 20px; text-align: center; border-radius: 50%; background: var(--accent); color: #fff; font-size: 11px; margin-right: 8px; }
-  .codeblock { background: #161a20; color: #dce3e8; border-radius: 10px; padding: 14px 16px; font-family: 'SF Mono', 'Fira Code', Consolas, monospace; font-size: 12.5px; line-height: 1.75; overflow-x: auto; white-space: pre; }
-  .codeblock .k { color: #e0a83e; }
-  .codeblock .v { color: #8fd0a8; }
-  .codeblock .c { color: #7c8794; }
-  .callout { margin-top: 18px; background: #fff8e6; border: 1px solid #f0dca0; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #6b5416; }
 
   .flow { margin-top: 40px; }
   .flow h3 { font-size: 16px; margin: 0 0 6px; }
-  .fc { display: flex; flex-direction: column; align-items: center; margin-top: 18px; }
-  .fc-node { width: 100%; border: 1.5px solid; border-radius: 10px; padding: 9px 12px; font-size: 13px; text-align: center; background: #fff; line-height: 1.55; }
-  .fc-node.front { border-color: #7aa7f0; background: #eef4ff; }
-  .fc-node.back { border-color: #e0b25a; background: #fff6e3; }
-  .fc-node.dec { border-style: dashed; border-color: #8b7bd8; background: #f4f1ff; font-weight: 600; }
-  .fc-node.ok { border-color: #58b88b; background: var(--ok-bg); color: var(--ok); font-weight: 700; }
-  .fc-node.bad { border-color: #e08a8a; background: #fdecec; color: #9b3535; }
-  .fc-node.start { width: auto; border-radius: 999px; background: var(--code-bg); border-color: #b8bec6; font-weight: 700; padding: 8px 24px; }
-  .fc-arrow { width: 2px; height: 22px; background: #9aa3ad; position: relative; flex-shrink: 0; }
-  .fc-arrow::after { content: ''; position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top: 7px solid #9aa3ad; border-bottom: 0; }
-  .fc-arrow .lab { position: absolute; left: 10px; top: 2px; font-size: 11px; color: var(--muted); white-space: nowrap; }
-  .fc-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; width: 100%; align-items: start; }
-  .fc-col { border: 1px solid var(--border); border-radius: 12px; padding: 14px; background: var(--surface); display: flex; flex-direction: column; align-items: center; }
-  .fc-col-title { align-self: flex-start; font-size: 12.5px; font-weight: 700; margin-bottom: 12px; }
-  .fc-side { display: flex; align-items: center; gap: 8px; width: 100%; margin-top: 6px; }
-  .fc-side .fc-node { flex: 1; }
-  .fc-tag { flex: 0 0 auto; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 10px; background: var(--code-bg); color: var(--muted); }
   .fc-legend { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 12px; color: var(--muted); margin-top: 14px; }
   .fc-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; border: 1.5px solid; vertical-align: -2px; margin-right: 5px; }
-  @media (max-width: 760px) { .fc-cols { grid-template-columns: minmax(0, 1fr); } }
+
+  .svgwrap { overflow-x: auto; margin-top: 18px; }
+  .svgfc { width: 100%; min-width: 760px; height: auto; display: block; }
+  .svgfc text { font-size: 12.5px; fill: #1c2128; text-anchor: middle; font-family: inherit; }
+  .svgfc text.bold { font-weight: 600; }
+  .svgfc text.lab { font-size: 11px; fill: #636c76; }
+  .svgfc text.okt { fill: #1a8a5f; font-weight: 700; }
+  .svgfc text.badt { fill: #9b3535; }
+  .svgfc text.badge { fill: #fff; font-size: 11px; font-weight: 700; }
+  .svgfc text.ptitle { text-anchor: start; font-size: 12px; font-weight: 700; fill: #636c76; }
+  .svgfc .panel { fill: #fff; stroke: #e2e5ea; stroke-width: 1; }
+  .svgfc .edge { fill: none; stroke: #8a949f; stroke-width: 1.6; }
+  .svgfc .n-front { fill: #eef4ff; stroke: #7aa7f0; stroke-width: 1.5; }
+  .svgfc .n-back { fill: #fff6e3; stroke: #e0b25a; stroke-width: 1.5; }
+  .svgfc .n-dec { fill: #f4f1ff; stroke: #8b7bd8; stroke-width: 1.5; stroke-dasharray: 5 3; }
+  .svgfc .n-ok { fill: #e6f5ee; stroke: #58b88b; stroke-width: 1.5; }
+  .svgfc .n-bad { fill: #fdecec; stroke: #e08a8a; stroke-width: 1.5; }
+  .svgfc .n-start { fill: #f1f3f6; stroke: #b8bec6; stroke-width: 1.5; }
 </style>
 </head>
 <body>
@@ -134,76 +125,56 @@
             </table>
           </div>
           <p class="zh muted" style="margin-top:12px">Access Token 方案会把"Google 签名担保身份"降级成"客户端自己上报的数据"，安全性下降，所以推荐采用 Authorization Code 方案。</p><p class="en muted" style="margin-top:12px">The Access Token approach downgrades “an identity Google vouches for” to “data the client self-reports” — a real drop in security — so Authorization Code is the recommended approach.</p>
-  <div class="example" id="example">
-    <h3><span class="zh">示例：Authorization Code 方案如何拿到并使用 refresh_token</span><span class="en">Example: obtaining and using a refresh_token with the Authorization Code approach</span></h3>
-    <p class="zh muted">下面是一个最小流程示意（代码里的 ID、令牌都是占位符，不是真实凭据）：前端只负责拿到一次性 code，refresh_token 全程只在后端。</p><p class="en muted">A minimal walkthrough (IDs and tokens in the code are placeholders, not real credentials): the front end only obtains a one-time code, and the refresh_token never leaves the backend.</p>
-
-    <div class="step-title"><span class="num">1</span><span class="zh">前端：弹窗授权，拿到一次性 code</span><span class="en">Front end: authorize in a popup and get a one-time code</span></div>
-    <div class="codeblock"><span class="c zh">// 在按钮点击事件里调用</span><span class="c en">// call this from a button click handler</span>
-<span class="k">const</span> client = google.accounts.oauth2.initCodeClient({
-  client_id: <span class="v">'YOUR_CLIENT_ID.apps.googleusercontent.com'</span>,
-  scope: <span class="v">'openid email profile'</span>,
-  ux_mode: <span class="v">'popup'</span>,
-  callback: (resp) => {
-    <span class="c zh">// resp.code 是一次性凭证，只发给自己的后端</span><span class="c en">// resp.code is a one-time credential; send it only to your own backend</span>
-    fetch(<span class="v">'/auth/google/exchange'</span>, { method: <span class="v">'POST'</span>, body: JSON.stringify({ code: resp.code }) });
-  },
-});
-client.requestCode();</div>
-
-    <div class="step-title"><span class="num">2</span><span class="zh">后端：用 code 换令牌，保存 refresh_token</span><span class="en">Backend: exchange the code for tokens and store the refresh_token</span></div>
-    <div class="codeblock"><span class="k">POST</span> https://oauth2.googleapis.com/token
-code=<span class="v">CODE_FROM_CLIENT</span>
-client_id=<span class="v">YOUR_CLIENT_ID</span>
-client_secret=<span class="v">YOUR_CLIENT_SECRET</span>   <span class="c zh">// 只在后端，绝不能给前端</span><span class="c en">// backend only, never expose to the front end</span>
-redirect_uri=<span class="v">postmessage</span>            <span class="c zh">// 弹窗模式固定写这个字面量</span><span class="c en">// literal value required for popup mode</span>
-grant_type=<span class="v">authorization_code</span>
-
-<span class="c zh">// 响应</span><span class="c en">// response</span>
-{
-  <span class="k">"access_token"</span>:  <span class="v">"ya29.a0A..."</span>,
-  <span class="k">"expires_in"</span>:    <span class="v">3599</span>,
-  <span class="k">"refresh_token"</span>: <span class="v">"1//0gXXXX..."</span>,   <span class="c zh">// 用户首次授权时才会下发，存到后端（加密）</span><span class="c en">// only issued when the user first grants consent; store it server-side (encrypted)</span>
-  <span class="k">"scope"</span>:         <span class="v">"openid email profile"</span>,
-  <span class="k">"token_type"</span>:    <span class="v">"Bearer"</span>,
-  <span class="k">"id_token"</span>:      <span class="v">"eyJhbGciOiJSUzI1NiIs..."</span>   <span class="c zh">// 验签后确认用户身份，再签发自己的登录会话</span><span class="c en">// verify it to confirm the user, then issue your own login session</span>
-}</div>
-
-    <div class="step-title"><span class="num">3</span><span class="zh">后端：令牌过期后静默续期，不需要用户再操作</span><span class="en">Backend: renew silently after the tokens expire, with no user action</span></div>
-    <div class="codeblock"><span class="k">POST</span> https://oauth2.googleapis.com/token
-client_id=<span class="v">YOUR_CLIENT_ID</span>
-client_secret=<span class="v">YOUR_CLIENT_SECRET</span>
-refresh_token=<span class="v">1//0gXXXX...</span>
-grant_type=<span class="v">refresh_token</span>
-
-<span class="c zh">// 响应：拿到新的令牌，全程没有弹窗</span><span class="c en">// response: fresh tokens, no popup involved</span>
-{
-  <span class="k">"access_token"</span>: <span class="v">"ya29.a0A... (new)"</span>,
-  <span class="k">"expires_in"</span>:   <span class="v">3599</span>,
-  <span class="k">"scope"</span>:        <span class="v">"openid email profile"</span>,
-  <span class="k">"token_type"</span>:   <span class="v">"Bearer"</span>,
-  <span class="k">"id_token"</span>:     <span class="v">"eyJhbGciOiJSUzI1NiIs... (new)"</span>
-}</div>
-
-    <div class="callout"><div class="zh">⚠️ refresh_token 不是永久有效：用户在 Google 账号里撤销授权、或者长期（约 6 个月）没有使用，续期时会返回 <code>invalid_grant</code>，这时需要让用户重新登录一次。</div><div class="en">⚠️ A refresh_token is not valid forever: if the user revokes access in their Google account, or it goes unused for a long time (about 6 months), the renewal request returns <code>invalid_grant</code> and the user has to sign in again.</div></div>
-  </div>
-
   <div class="flow" id="flow">
     <h3><span class="zh">前端保持登录的完整流程</span><span class="en">Complete flow: keeping the user signed in</span></h3>
     <p class="zh muted">前端启动时先看本地有没有后端签发的会话令牌：有就直接用它登录，没有（或被拒绝）才弹出 Google 授权。</p><p class="en muted">On startup the front end first checks for a session token issued by the backend: if there is one it logs in with it directly; only when there is none (or it is rejected) does it open the Google authorization popup.</p>
-    <div class="fc">
-      <div class="fc-node start"><span class="zh">打开页面 / 应用启动</span><span class="en">Open the page / start the app</span></div><div class="fc-arrow"></div>
-      <div class="fc-node dec"><span class="zh">本地有后端签发的会话令牌？</span><span class="en">Is there a backend-issued session token in local storage?</span></div><div class="fc-arrow"></div>
-      <div class="fc-cols">
-        <div class="fc-col">
-          <div class="fc-col-title"><span class="zh">分支 A：有缓存（是）</span><span class="en">Branch A: cached token (Yes)</span></div>
-          <div class="fc-node front"><span class="zh">前端：带着会话令牌请求后端登录</span><span class="en">Front end: send the session token to the backend to log in</span></div><div class="fc-arrow"></div><div class="fc-node dec"><span class="zh">后端校验：会话令牌有效？</span><span class="en">Backend check: is the session token valid?</span></div><div class="fc-side"><span class="fc-tag"><span class="zh">是</span><span class="en">Yes</span></span><div class="fc-node ok"><span class="zh">✓ 登录成功（无弹窗，不涉及 Google）</span><span class="en">✓ Logged in (no popup, Google not involved)</span></div></div><div class="fc-arrow"><span class="lab"><span class="zh">否（已过期）</span><span class="en">No (expired)</span></span></div><div class="fc-node back"><span class="zh">后端用已存的 refresh_token 向 Google 静默续期</span><span class="en">Backend silently renews with Google using the stored refresh_token</span></div><div class="fc-arrow"></div><div class="fc-node dec"><span class="zh">续期成功？</span><span class="en">Renewal succeeded?</span></div><div class="fc-side"><span class="fc-tag"><span class="zh">是</span><span class="en">Yes</span></span><div class="fc-node ok"><span class="zh">✓ 签发新会话令牌，前端无感登录成功</span><span class="en">✓ Issue a new session token; the front end logs in seamlessly</span></div></div><div class="fc-arrow"><span class="lab"><span class="zh">否（invalid_grant）</span><span class="en">No (invalid_grant)</span></span></div><div class="fc-node bad"><span class="zh">返回 401 → 前端清除本地令牌 → 走右侧分支 B 重新授权</span><span class="en">Return 401 → front end clears the local token → go through Branch B on the right to re-authorize</span></div>
-        </div>
-        <div class="fc-col">
-          <div class="fc-col-title"><span class="zh">分支 B：没有缓存（否）或被拒绝</span><span class="en">Branch B: no cache (No) or rejected</span></div>
-          <div class="fc-node front"><span class="zh">前端：弹出 Google 授权窗口（initCodeClient）</span><span class="en">Front end: open the Google authorization popup (initCodeClient)</span></div><div class="fc-arrow"></div><div class="fc-node front"><span class="zh">拿到一次性 code，发给后端</span><span class="en">Get the one-time code and send it to the backend</span></div><div class="fc-arrow"></div><div class="fc-node back"><span class="zh">后端用 code 换 id_token + refresh_token，并保存 refresh_token</span><span class="en">Backend exchanges the code for id_token + refresh_token and stores the refresh_token</span></div><div class="fc-arrow"></div><div class="fc-node back"><span class="zh">后端验签 id_token，签发自己的会话令牌</span><span class="en">Backend verifies the id_token and issues its own session token</span></div><div class="fc-arrow"></div><div class="fc-node front"><span class="zh">前端保存会话令牌（cookie / localStorage）</span><span class="en">Front end stores the session token (cookie / localStorage)</span></div><div class="fc-arrow"></div><div class="fc-node ok"><span class="zh">✓ 登录成功</span><span class="en">✓ Logged in</span></div>
-        </div>
-      </div>
+    <div class="svgwrap">
+<svg class="svgfc" viewBox="0 0 960 700" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Login persistence flowchart">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8a949f"/></marker></defs>
+<rect class="panel" x="20" y="180" width="460" height="496" rx="12"/>
+<rect class="panel" x="500" y="180" width="440" height="496" rx="12"/>
+<circle cx="44" cy="200" r="10" fill="#2563eb"/><text class="badge" x="44" y="204.5">A</text>
+<circle cx="524" cy="200" r="10" fill="#2563eb"/><text class="badge" x="524" y="204.5">B</text>
+<text class="zh ptitle" x="60" y="204.5">有缓存</text><text class="en ptitle" x="60" y="204.5">Cached token</text>
+<text class="zh ptitle" x="540" y="204.5">无缓存 / 被拒绝</text><text class="en ptitle" x="540" y="204.5">No cache / rejected</text>
+<path class="edge" d="M480,48 V72" marker-end="url(#ah)"/>
+<path class="edge" d="M290,112 H160 V212" marker-end="url(#ah)"/>
+<path class="edge" d="M670,112 H720 V212" marker-end="url(#ah)"/>
+<path class="edge" d="M160,258 V302" marker-end="url(#ah)"/>
+<path class="edge" d="M285,340 H316" marker-end="url(#ah)"/>
+<path class="edge" d="M160,378 V412" marker-end="url(#ah)"/>
+<path class="edge" d="M160,462 V490" marker-end="url(#ah)"/>
+<path class="edge" d="M250,525 H316" marker-end="url(#ah)"/>
+<path class="edge" d="M160,560 V596" marker-end="url(#ah)"/>
+<path class="edge" d="M285,626 H540 V235 H570" marker-end="url(#ah)"/>
+<path class="edge" d="M720,258 V290" marker-end="url(#ah)"/>
+<path class="edge" d="M720,336 V368" marker-end="url(#ah)"/>
+<path class="edge" d="M720,418 V450" marker-end="url(#ah)"/>
+<path class="edge" d="M720,496 V528" marker-end="url(#ah)"/>
+<path class="edge" d="M720,574 V606" marker-end="url(#ah)"/>
+<rect class="n-start" x="380" y="14" width="200" height="34" rx="17"/><text class="zh bold" x="480"><tspan x="480" y="35.5">打开页面 / 应用启动</tspan></text><text class="en bold" x="480"><tspan x="480" y="35.5">Open the page / start the app</tspan></text>
+<polygon class="n-dec" points="290,112 480,72 670,112 480,152"/><text class="zh bold" x="480"><tspan x="480" y="116.5">本地有后端签发的会话令牌？</tspan></text><text class="en bold" x="480"><tspan x="480" y="108.5">Is there a backend-issued session token</tspan><tspan x="480" y="124.5">in local storage?</tspan></text>
+<text class="zh lab" x="225" y="104" text-anchor="middle">有 → 分支 A</text><text class="en lab" x="225" y="104" text-anchor="middle">Yes → Branch A</text>
+<text class="zh lab" x="730" y="160" text-anchor="start">无 → 分支 B</text><text class="en lab" x="730" y="160" text-anchor="start">No → Branch B</text>
+<rect class="n-front" x="35" y="212" width="250" height="46" rx="9"/><text class="zh " x="160.0"><tspan x="160.0" y="231.5">前端：带着会话令牌</tspan><tspan x="160.0" y="247.5">请求后端登录</tspan></text><text class="en " x="160.0"><tspan x="160.0" y="231.5">Front end: send the session</tspan><tspan x="160.0" y="247.5">token to the backend to log in</tspan></text>
+<polygon class="n-dec" points="35,340 160,302 285,340 160,378"/><text class="zh bold" x="160"><tspan x="160" y="336.5">后端校验：</tspan><tspan x="160" y="352.5">会话令牌有效？</tspan></text><text class="en bold" x="160"><tspan x="160" y="336.5">Backend check:</tspan><tspan x="160" y="352.5">session token valid?</tspan></text>
+<text class="zh lab" x="300" y="331" text-anchor="middle">是</text><text class="en lab" x="300" y="331" text-anchor="middle">Yes</text>
+<rect class="n-ok" x="316" y="315" width="156" height="50" rx="9"/><text class="zh okt" x="394.0"><tspan x="394.0" y="336.5">✓ 登录成功</tspan><tspan x="394.0" y="352.5">无弹窗 · 不涉及 Google</tspan></text><text class="en okt" x="394.0"><tspan x="394.0" y="336.5">✓ Logged in</tspan><tspan x="394.0" y="352.5">no popup · no Google</tspan></text>
+<text class="zh lab" x="170" y="398" text-anchor="start">否（已过期）</text><text class="en lab" x="170" y="398" text-anchor="start">No (expired)</text>
+<rect class="n-back" x="35" y="412" width="250" height="50" rx="9"/><text class="zh " x="160.0"><tspan x="160.0" y="433.5">后端用已存的 refresh_token</tspan><tspan x="160.0" y="449.5">向 Google 静默续期</tspan></text><text class="en " x="160.0"><tspan x="160.0" y="433.5">Backend silently renews with Google</tspan><tspan x="160.0" y="449.5">using the stored refresh_token</tspan></text>
+<polygon class="n-dec" points="70,525 160,490 250,525 160,560"/><text class="zh bold" x="160"><tspan x="160" y="529.5">续期成功？</tspan></text><text class="en bold" x="160"><tspan x="160" y="529.5">Renewal succeeded?</tspan></text>
+<text class="zh lab" x="283" y="516" text-anchor="middle">是</text><text class="en lab" x="283" y="516" text-anchor="middle">Yes</text>
+<rect class="n-ok" x="316" y="500" width="156" height="50" rx="9"/><text class="zh okt" x="394.0"><tspan x="394.0" y="521.5">✓ 签发新会话令牌</tspan><tspan x="394.0" y="537.5">前端无感登录</tspan></text><text class="en okt" x="394.0"><tspan x="394.0" y="521.5">✓ Issue new session</tspan><tspan x="394.0" y="537.5">token; seamless login</tspan></text>
+<text class="zh lab" x="170" y="583" text-anchor="start">否（invalid_grant）</text><text class="en lab" x="170" y="583" text-anchor="start">No (invalid_grant)</text>
+<rect class="n-bad" x="35" y="596" width="250" height="60" rx="9"/><text class="zh badt" x="160.0"><tspan x="160.0" y="622.5">返回 401，前端清除本地令牌</tspan><tspan x="160.0" y="638.5">→ 重新授权（走分支 B）</tspan></text><text class="en badt" x="160.0"><tspan x="160.0" y="622.5">Return 401; front end clears the</tspan><tspan x="160.0" y="638.5">local token → re-authorize (Branch B)</tspan></text>
+<text class="zh lab" x="412" y="618" text-anchor="middle">转入分支 B 重新授权</text><text class="en lab" x="412" y="618" text-anchor="middle">Go to Branch B to re-authorize</text>
+<rect class="n-front" x="570" y="212" width="300" height="46" rx="9"/><text class="zh " x="720.0"><tspan x="720.0" y="231.5">前端：弹出 Google 授权窗口</tspan><tspan x="720.0" y="247.5">（initCodeClient）</tspan></text><text class="en " x="720.0"><tspan x="720.0" y="231.5">Front end: open the Google</tspan><tspan x="720.0" y="247.5">authorization popup (initCodeClient)</tspan></text>
+<rect class="n-front" x="570" y="290" width="300" height="46" rx="9"/><text class="zh " x="720.0"><tspan x="720.0" y="317.5">拿到一次性 code，发给后端</tspan></text><text class="en " x="720.0"><tspan x="720.0" y="309.5">Get the one-time code and</tspan><tspan x="720.0" y="325.5">send it to the backend</tspan></text>
+<rect class="n-back" x="570" y="368" width="300" height="50" rx="9"/><text class="zh " x="720.0"><tspan x="720.0" y="389.5">后端用 code 换 id_token + refresh_token</tspan><tspan x="720.0" y="405.5">并保存 refresh_token</tspan></text><text class="en " x="720.0"><tspan x="720.0" y="389.5">Backend exchanges the code for id_token</tspan><tspan x="720.0" y="405.5">+ refresh_token and stores the refresh_token</tspan></text>
+<rect class="n-back" x="570" y="450" width="300" height="46" rx="9"/><text class="zh " x="720.0"><tspan x="720.0" y="469.5">后端验签 id_token，</tspan><tspan x="720.0" y="485.5">签发自己的会话令牌</tspan></text><text class="en " x="720.0"><tspan x="720.0" y="469.5">Backend verifies the id_token</tspan><tspan x="720.0" y="485.5">and issues its own session token</tspan></text>
+<rect class="n-front" x="570" y="528" width="300" height="46" rx="9"/><text class="zh " x="720.0"><tspan x="720.0" y="547.5">前端保存会话令牌</tspan><tspan x="720.0" y="563.5">（cookie / localStorage）</tspan></text><text class="en " x="720.0"><tspan x="720.0" y="547.5">Front end stores the session token</tspan><tspan x="720.0" y="563.5">(cookie / localStorage)</tspan></text>
+<rect class="n-ok" x="570" y="606" width="300" height="40" rx="9"/><text class="zh okt" x="720.0"><tspan x="720.0" y="630.5">✓ 登录成功</tspan></text><text class="en okt" x="720.0"><tspan x="720.0" y="630.5">✓ Logged in</tspan></text>
+</svg>
     </div>
     <div class="fc-legend">
       <span><i style="border-color:#7aa7f0;background:#eef4ff"></i><span class="zh">前端</span><span class="en">Front end</span></span>
