@@ -82,7 +82,6 @@
   .cd .steps div { display: flex; justify-content: space-between; gap: 12px; padding: 8px 14px; font-size: 13px; border-bottom: 1px solid var(--border); }
   .cd .steps div:last-child { border-bottom: none; }
   .cd .steps b { color: #b13a3a; font-variant-numeric: tabular-nums; }
-  .cd .note { margin-top: 14px; background: #fff8e6; border: 1px solid #f0dca0; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #6b5416; }
 
   .ap-list { display: flex; flex-direction: column; gap: 14px; margin-top: 4px; }
   .ap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
@@ -177,13 +176,11 @@
           <div><span><span class="zh">第 3 次关闭</span><span class="en">3rd dismissal</span></span><b><span class="zh">1 周</span><span class="en">1 week</span></b></div>
           <div><span><span class="zh">第 4 次及以后</span><span class="en">4th and later</span></span><b><span class="zh">4 周</span><span class="en">4 weeks</span></b></div>
         </div>
-        <p class="zh muted" style="margin-top:16px"><b>目前没有稳定的正式 API 可以直接回答"现在是否处于冷却期"</b>，只能间接判断，常见做法有三种：</p><p class="en muted" style="margin-top:16px"><b>There is no stable, official API that directly answers “is it on cooldown right now”</b>; it can only be judged indirectly. There are three common approaches:</p>
+        <p class="zh muted" style="margin-top:16px"><b>目前没有稳定的正式 API 可以直接回答"现在是否处于冷却期"</b>，只能间接判断，常见做法有两种：</p><p class="en muted" style="margin-top:16px"><b>There is no stable, official API that directly answers “is it on cooldown right now”</b>; it can only be judged indirectly. There are two common approaches:</p>
         <ol>
             <li class="zh"><b>看 <code>prompt()</code> 的结果通知（官方，但在被弃用）</b>：调用 <code>google.accounts.id.prompt(callback)</code>，在回调里用 <code>isNotDisplayed()</code> 加 <code>getNotDisplayedReason()</code> 判断，原因为 <code>suppressed_by_user</code> 就表示处于用户关闭后的冷却期。注意：启用 FedCM 后，这类状态方法不再可靠，Google 也在弃用它们，请以 Google 最新文档为准</li><li class="en"><b>Read the result notification of <code>prompt()</code> (official, but being deprecated)</b>: call <code>google.accounts.id.prompt(callback)</code> and, in the callback, use <code>isNotDisplayed()</code> with <code>getNotDisplayedReason()</code>; a reason of <code>suppressed_by_user</code> means the user-dismissal cooldown is in effect. Note: with FedCM these status methods are no longer reliable and Google is deprecating them, so check Google’s latest docs</li>
-            <li class="zh"><b>前端自己记录关闭时间（推断）</b>：用户关闭 One Tap 时（回调里 <code>isSkippedMoment()</code> 且 <code>getSkippedReason()</code> 为 <code>user_cancel</code>），在本地记下时间和累计次数，再按上面的阶梯（2 小时 / 1 天 / 1 周 / 4 周）估算是否仍在冷却期。缺点：只是估算，看不到 Google 侧的真实状态，用户清除站点数据或换设备就会失准</li><li class="en"><b>Record the dismissal time in the front end (inference)</b>: when the user closes One Tap (<code>isSkippedMoment()</code> with <code>getSkippedReason()</code> equal to <code>user_cancel</code> in the callback), store the time and a running count locally, then estimate whether it is still on cooldown with the ladder above (2 hours / 1 day / 1 week / 4 weeks). Downside: it is only an estimate, you cannot see Google’s real state, and it drifts if the user clears site data or switches devices</li>
             <li class="zh"><b>不判断，直接试</b>：每次先调用 <code>prompt()</code>，如果没有弹出（通知为未显示，或等待一小段时间仍无反应），就直接改用 OAuth 弹窗。最简单，代价是需要设一个超时，可能有短暂的等待</li><li class="en"><b>Do not judge, just try</b>: always call <code>prompt()</code> first and, if nothing is shown (the notification says not displayed, or nothing happens after a short wait), switch straight to the OAuth popup. The simplest option; the cost is that you need a timeout and there may be a brief wait</li>
         </ol>
-        <div class="note"><div class="zh">以上是通用做法，<b>并不是 WSOP 的实际实现</b>，WSOP 具体怎么判断冷却期目前未知。这也是上面对比里"方案 3（Authorization Code）"更受青睐的原因之一：它不依赖 One Tap，就不需要判断冷却期。</div><div class="en">These are general approaches and <b>not WSOP’s actual implementation</b>; how WSOP detects the cooldown is not known. It is also one reason Approach 3 (Authorization Code) in the comparison above is preferred: it does not rely on One Tap, so there is no cooldown to detect.</div></div>
       </div>
     </div>
   </div>
