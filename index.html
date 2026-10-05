@@ -171,6 +171,36 @@
   .lang-switch { position: absolute; top: -18px; right: 0; display: flex; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
   .lang-switch button { font: inherit; font-size: 12px; font-weight: 600; padding: 5px 12px; border: none; background: transparent; color: var(--muted); cursor: pointer; }
   .lang-switch button.active { background: var(--accent); color: #fff; }
+
+  .option-link { font-size: 13px; font-weight: 600; }
+  .detail { margin-top: 36px; }
+  .detail h3 { font-size: 16px; margin: 0 0 6px; }
+  .sub-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 14px 0 22px; }
+  .sub-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+  .sub-card.rec { border-color: #9fd6bb; background: #f7fcf9; }
+  .sub-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+  .sub-num { font-size: 11px; font-weight: 700; color: var(--accent); background: var(--accent-bg); padding: 2px 9px; border-radius: 8px; }
+  .sub-tag { font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 10px; background: var(--code-bg); color: var(--muted); }
+  .sub-tag.ok { background: var(--ok-bg); color: var(--ok); }
+  .sub-tag.warn { background: #fdecec; color: #b13a3a; }
+  .sub-name { font-size: 14.5px; font-weight: 700; margin-bottom: 6px; }
+  .sub-desc { font-size: 13px; color: var(--muted); }
+  .cmp-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+  table.cmp { width: 100%; border-collapse: collapse; min-width: 600px; }
+  table.cmp th, table.cmp td { padding: 11px 14px; text-align: left; font-size: 13px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); vertical-align: middle; }
+  table.cmp th:last-child, table.cmp td:last-child { border-right: none; }
+  table.cmp tr:last-child td { border-bottom: none; }
+  table.cmp thead th { background: var(--code-bg); font-size: 13px; }
+  table.cmp .rowlabel { background: var(--code-bg); font-weight: 600; font-size: 12.5px; width: 22%; }
+  table.cmp .recol { background: #f4fbf7; }
+  table.cmp thead th.recol { background: #e3f4ea; }
+  table.cmp .win { color: var(--ok); font-weight: 600; }
+  table.cmp .lose { color: var(--muted); }
+  table.cmp .th-num { display: block; font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  table.cmp .th-tag { display: inline-block; margin-top: 5px; font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 8px; background: #fff; color: var(--muted); border: 1px solid var(--border); }
+  table.cmp .th-tag.ok { background: var(--ok-bg); color: var(--ok); border-color: transparent; }
+  table.cmp .th-tag.warn { background: #fdecec; color: #b13a3a; border-color: transparent; }
+  @media (max-width: 760px) { .sub-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -336,7 +366,58 @@
         <div class="option-desc"><span class="zh">参照 Firebase 的实现思路（idToken 验签 + refreshToken 静默续期），自己实现一套登录状态维持机制，只在最初的身份验证阶段对接各平台的 OAuth。竞品 WSOP 采用的正是这条路径。</span><span class="en">Follow Firebase’s approach (idToken signature verification + refreshToken silent renewal) to build your own session-keeping mechanism, integrating each platform’s OAuth only for the initial identity verification. Competitor WSOP takes exactly this path.</span></div>
         <div class="option-pros"><b><span class="zh">优势</span><span class="en">Pros</span></b><span class="zh">用户体系完全自主可控、不依赖第三方服务的可用性和政策变化</span><span class="en">Full control over the user system, no dependence on a third party’s availability or policy changes</span></div>
         <div class="option-cons"><b><span class="zh">需要注意</span><span class="en">Watch out</span></b><span class="zh">开发和维护成本明显更高，需要自己处理 Token 签发、续期、多端同步等一整套逻辑</span><span class="en">Noticeably higher development and maintenance cost; you must handle token issuing, renewal, multi-device sync and more yourself</span></div>
+        <div class="option-demo">
+          <div class="option-demo-note"><span class="zh">细分为三种实现方式（ID Token / Access Token / Authorization Code），对比见下方。</span><span class="en">Breaks down into three implementation approaches (ID Token / Access Token / Authorization Code); see the comparison below.</span></div>
+          <a class="option-link" href="#option2-detail"><span class="zh">查看三种实现方式对比 ↓</span><span class="en">See the three-approach comparison ↓</span></a>
+        </div>
       </div>
+    </div>
+
+    <div class="detail" id="option2-detail">
+      <h3><span class="zh">方案二细分：三种实现方式</span><span class="en">Option 2 breakdown: three implementation approaches</span></h3>
+      <p class="zh muted">方案二的"自研"部分，在 Google 侧拿凭证的方式上又可以分成三类，区别主要在触发的 API、弹窗形式和前端拿到的东西。</p><p class="en muted">Within Option 2, the way the Google credential is obtained splits into three approaches; they differ in the API that triggers sign-in, the popup style, and what the front end receives.</p>
+
+      <div class="sub-grid">
+        <div class="sub-card">
+          <div class="sub-top"><span class="sub-num">2.1</span><span class="sub-tag"><span class="zh">现状</span><span class="en">Current</span></span></div>
+          <div class="sub-name">ID Token</div>
+          <div class="sub-desc"><span class="zh">用 <code>accounts.id.prompt()</code> 自动弹出页内卡片（One Tap），前端直接拿到 <code>id_token</code>（JWT）。会受 One Tap 冷却机制影响。</span><span class="en">Uses <code>accounts.id.prompt()</code> to show the automatic in-page card (One Tap); the front end receives the <code>id_token</code> (JWT) directly. Subject to the One Tap cooldown.</span></div>
+        </div>
+        <div class="sub-card">
+          <div class="sub-top"><span class="sub-num">2.2</span><span class="sub-tag warn"><span class="zh">不推荐</span><span class="en">Not recommended</span></span></div>
+          <div class="sub-name">Access Token</div>
+          <div class="sub-desc"><span class="zh">用 <code>oauth2.initTokenClient()</code> 弹出独立弹窗，不受冷却影响；但前端只拿到不透明的 <code>access_token</code>，没有可验证的 id_token，后端校验要重写。</span><span class="en">Uses <code>oauth2.initTokenClient()</code> for an independent popup, unaffected by the cooldown; but the front end only gets an opaque <code>access_token</code> with no verifiable id_token, so backend verification must be rewritten.</span></div>
+        </div>
+        <div class="sub-card rec">
+          <div class="sub-top"><span class="sub-num">2.3</span><span class="sub-tag ok"><span class="zh">推荐</span><span class="en">Recommended</span></span></div>
+          <div class="sub-name">Authorization Code</div>
+          <div class="sub-desc"><span class="zh">用 <code>oauth2.initCodeClient()</code> 弹出独立弹窗，不受冷却影响；前端拿到一次性 <code>code</code>，由后端用 <code>client_secret</code> 换出 id_token，现有校验逻辑可复用。</span><span class="en">Uses <code>oauth2.initCodeClient()</code> for an independent popup, unaffected by the cooldown; the front end gets a one-time <code>code</code> and the backend exchanges it for an id_token with <code>client_secret</code>, so the existing verification logic can be reused.</span></div>
+        </div>
+      </div>
+
+      <h3><span class="zh">三种方案对比</span><span class="en">Comparing the three approaches</span></h3>
+      <div class="cmp-wrap">
+        <table class="cmp">
+          <thead>
+            <tr>
+              <th></th>
+              <th><span class="th-num"><span class="zh">方案 1</span><span class="en">Approach 1</span></span>ID Token<br><span class="th-tag"><span class="zh">现状</span><span class="en">Current</span></span></th>
+              <th><span class="th-num"><span class="zh">方案 2</span><span class="en">Approach 2</span></span>Access Token<br><span class="th-tag warn"><span class="zh">不推荐</span><span class="en">Not recommended</span></span></th>
+              <th class="recol"><span class="th-num"><span class="zh">方案 3</span><span class="en">Approach 3</span></span>Authorization Code<br><span class="th-tag ok"><span class="zh">推荐</span><span class="en">Recommended</span></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="rowlabel"><span class="zh">触发 API</span><span class="en">Trigger API</span></td><td><code>accounts.id.prompt()</code></td><td><code>oauth2.initTokenClient()</code></td><td class="recol"><code>oauth2.initCodeClient()</code></td></tr>
+            <tr><td class="rowlabel"><span class="zh">弹窗形式</span><span class="en">Popup type</span></td><td class="lose"><span class="zh">页内自动卡片</span><span class="en">Automatic in-page card</span></td><td><span class="zh">独立弹窗</span><span class="en">Independent popup</span></td><td class="recol win"><span class="zh">独立弹窗</span><span class="en">Independent popup</span></td></tr>
+            <tr><td class="rowlabel"><span class="zh">受 One Tap 冷却影响</span><span class="en">Subject to One Tap cooldown</span></td><td class="lose"><span class="zh">是</span><span class="en">Yes</span></td><td class="win"><span class="zh">否</span><span class="en">No</span></td><td class="recol win"><span class="zh">否</span><span class="en">No</span></td></tr>
+            <tr><td class="rowlabel"><span class="zh">前端直接拿到</span><span class="en">Frontend gets directly</span></td><td><code>id_token</code> (JWT)</td><td><code>access_token</code><span class="zh">（不透明字符串）</span><span class="en"> (opaque string)</span></td><td class="recol"><code>code</code><span class="zh">（一次性凭证）</span><span class="en"> (one-time credential)</span></td></tr>
+            <tr><td class="rowlabel"><span class="zh">含可验证的 id_token</span><span class="en">Includes a verifiable id_token</span></td><td class="win"><span class="zh">是</span><span class="en">Yes</span></td><td class="lose"><span class="zh">否</span><span class="en">No</span></td><td class="recol win"><span class="zh">是（换取结果里含）</span><span class="en">Yes (included in the exchange result)</span></td></tr>
+            <tr><td class="rowlabel"><span class="zh">换取步骤在哪</span><span class="en">Where the exchange happens</span></td><td><span class="zh">无需换取</span><span class="en">No exchange needed</span></td><td><span class="zh">无需换取</span><span class="en">No exchange needed</span></td><td class="recol"><span class="zh">后端用 <code>client_secret</code> 换</span><span class="en">Backend, via <code>client_secret</code></span></td></tr>
+            <tr><td class="rowlabel"><span class="zh">后端校验要改</span><span class="en">Backend verification needs rewriting</span></td><td>—</td><td class="lose"><span class="zh">要重写</span><span class="en">Yes, must be rewritten</span></td><td class="recol win"><span class="zh">不用改，复用现有</span><span class="en">No, reuses existing logic</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="zh muted" style="margin-top:12px">Access Token 方案会把"Google 签名担保身份"降级成"客户端自己上报的数据"，安全性下降，所以推荐采用 Authorization Code 方案。</p><p class="en muted" style="margin-top:12px">The Access Token approach downgrades “an identity Google vouches for” to “data the client self-reports” — a real drop in security — so Authorization Code is the recommended approach.</p>
     </div>
   </section>
 
