@@ -54,6 +54,21 @@
     background: transparent; color: var(--danger); font-size: 13px; cursor: pointer;
   }
 
+  .card.wide { max-width: 760px; }
+  .result { text-align: left; margin-top: 22px; border-top: 1px solid var(--border); padding-top: 18px; }
+  .result-src { font-size: 12px; color: var(--muted); background: var(--surface2); border-radius: 8px; padding: 8px 12px; margin-bottom: 14px; line-height: 1.6; }
+  .result h3 { font-size: 13px; margin: 18px 0 4px; }
+  .result .hint { font-size: 12px; color: var(--muted); margin-bottom: 6px; line-height: 1.6; }
+  .result pre {
+    background: #f4efe4; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px;
+    font-family: 'SF Mono', Consolas, monospace; font-size: 12px; line-height: 1.6;
+    overflow-x: auto; white-space: pre-wrap; word-break: break-all;
+  }
+  .tok { display: flex; align-items: flex-start; gap: 8px; margin: 6px 0; }
+  .tok-label { flex: 0 0 120px; font-size: 12px; font-weight: 600; padding-top: 2px; }
+  .tok-val { flex: 1; min-width: 0; font-family: 'SF Mono', Consolas, monospace; font-size: 12px; word-break: break-all; line-height: 1.6; }
+  .tok-toggle { flex: 0 0 auto; font-size: 11px; border: 1px solid var(--border); background: var(--surface2); border-radius: 6px; padding: 2px 8px; cursor: pointer; color: var(--text); }
+
   .login-box { display: block; }
   .login-box.hidden { display: none; }
 
@@ -101,6 +116,7 @@
     <div class="user-email" id="userEmail"></div>
     <div class="user-provider" id="userProvider"></div>
     <button class="signout-btn" id="btnSignOut">退出登录</button>
+    <div class="result" id="resultBox"></div>
   </div>
 </div>
 
@@ -172,14 +188,20 @@ function initFirebase() {
 
   auth.onAuthStateChanged(user => {
     renderUser(user);
+    if (!user) lastCredential = null;
+    renderResult(user, lastCredential);
     AuthBridge._emit(user);
   });
 }
+
+let lastCredential = null;
 
 async function signInWith(provider) {
   setStatus('');
   try {
     const result = await auth.signInWithPopup(provider);
+    lastCredential = result;
+    renderResult(result.user, result);
     setStatus('');
     return serializeUser(result.user);
   } catch (e) {
@@ -196,7 +218,83 @@ function describeError(e) {
   return '登录失败：' + (e.message || e.code || '未知错误');
 }
 
+const esc = (v) => String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const pre = (obj) => '<pre>' + esc(JSON.stringify(obj, null, 2)) + '</pre>';
+
+function decodeJwt(token) {
+  try {
+    const dec = (s) => JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0))));
+    const [h, p] = token.split('.');
+    return { header: dec(h), payload: dec(p) };
+  } catch (e) { return null; }
+}
+
+function tokenRow(label, value) {
+  if (!value) return '';
+  const mask = value.slice(0, 28) + '…（共 ' + value.length + ' 字符）';
+  return `<div class="tok"><div class="tok-label">${esc(label)}</div>
+    <div class="tok-val" data-full="${esc(value)}" data-mask="${esc(mask)}">${esc(mask)}</div>
+    <button class="tok-toggle">显示完整</button></div>`;
+}
+
+async function renderResult(user, cred) {
+  const box = $('resultBox');
+  if (!user) { box.innerHTML = ''; return; }
+  const idToken = await user.getIdToken();
+  const decoded = decodeJwt(idToken);
+
+  const userInfo = {
+    uid: user.uid,
+    displayName: user.displayName,
+    email: user.email,
+    emailVerified: user.emailVerified,
+    photoURL: user.photoURL,
+    providerData: user.providerData.map(p => ({ providerId: p.providerId, uid: p.uid, email: p.email })),
+    metadata: { creationTime: user.metadata.creationTime, lastSignInTime: user.metadata.lastSignInTime },
+  };
+
+  let html = `<div class="result-src">${cred
+    ? '本次是通过弹窗登录得到的完整返回（<code>signInWithPopup</code> 的 UserCredential）。'
+    : '这是页面刷新后从浏览器本地缓存自动恢复的会话：没有重新走登录，所以只有 user 和 Firebase 令牌，没有 Google 返回的凭证和 additionalUserInfo。'}</div>`;
+
+  html += '<h3>user（登录用户）</h3><div class="hint">Firebase 自己的用户记录，uid 是 Firebase 用户体系里的唯一标识。</div>' + pre(userInfo);
+
+  if (cred && cred.additionalUserInfo) {
+    const a = cred.additionalUserInfo;
+    html += '<h3>additionalUserInfo（附加信息）</h3><div class="hint">isNewUser 表示是否第一次登录；profile 是 Google 原样返回的个人资料。</div>'
+      + pre({ isNewUser: a.isNewUser, providerId: a.providerId, profile: a.profile });
+  }
+
+  html += '<h3>Firebase 令牌</h3><div class="hint">这两个是 Firebase 自己签发的（不是 Google 的），令牌默认只显示前几位，点右侧可展开。</div>'
+    + tokenRow('idToken', idToken) + tokenRow('refreshToken', user.refreshToken);
+
+  if (decoded) {
+    const pl = Object.assign({}, decoded.payload);
+    ['iat', 'exp', 'auth_time'].forEach(k => { if (pl[k]) pl[k + '（可读时间）'] = new Date(pl[k] * 1000).toLocaleString(); });
+    html += '<h3>idToken 解码结果</h3><div class="hint">JWT 只是签名、不是加密，任何人都能解码看到内容。注意 iss 是 securetoken.google.com/项目ID（Firebase 签发），并带 firebase 字段，对比竞品 WSOP 的 accounts.google.com。</div>'
+      + pre({ header: decoded.header, payload: pl });
+  }
+
+  if (cred && cred.credential) {
+    const c = cred.credential;
+    html += '<h3>credential（Google 返回的凭证）</h3><div class="hint">这是 Google 在登录弹窗里交给 Firebase 的原始凭证，Firebase 验证完才另外签发了上面那套令牌。</div>'
+      + pre({ providerId: c.providerId, signInMethod: c.signInMethod })
+      + tokenRow('Google idToken', c.idToken) + tokenRow('Google accessToken', c.accessToken);
+    const g = c.idToken && decodeJwt(c.idToken);
+    if (g) html += '<div class="hint" style="margin-top:8px">Google idToken 解码（iss 为 accounts.google.com）：</div>' + pre({ iss: g.payload.iss, aud: g.payload.aud, sub: g.payload.sub, email: g.payload.email });
+  }
+
+  box.innerHTML = html;
+  box.querySelectorAll('.tok-toggle').forEach(btn => btn.addEventListener('click', () => {
+    const val = btn.previousElementSibling;
+    const full = val.textContent === val.dataset.full;
+    val.textContent = full ? val.dataset.mask : val.dataset.full;
+    btn.textContent = full ? '显示完整' : '收起';
+  }));
+}
+
 function renderUser(user) {
+  document.querySelector('.card').classList.toggle('wide', !!user);
   if (user) {
     $('loginBox').classList.add('hidden');
     $('userBox').classList.add('active');
