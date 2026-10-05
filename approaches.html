@@ -74,6 +74,29 @@
   .codeblock .v { color: #8fd0a8; }
   .codeblock .c { color: #7c8794; }
   .callout { margin-top: 18px; background: #fff8e6; border: 1px solid #f0dca0; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #6b5416; }
+
+  .flow { margin-top: 40px; }
+  .flow h3 { font-size: 16px; margin: 0 0 6px; }
+  .fc { display: flex; flex-direction: column; align-items: center; margin-top: 18px; }
+  .fc-node { width: 100%; border: 1.5px solid; border-radius: 10px; padding: 9px 12px; font-size: 13px; text-align: center; background: #fff; line-height: 1.55; }
+  .fc-node.front { border-color: #7aa7f0; background: #eef4ff; }
+  .fc-node.back { border-color: #e0b25a; background: #fff6e3; }
+  .fc-node.dec { border-style: dashed; border-color: #8b7bd8; background: #f4f1ff; font-weight: 600; }
+  .fc-node.ok { border-color: #58b88b; background: var(--ok-bg); color: var(--ok); font-weight: 700; }
+  .fc-node.bad { border-color: #e08a8a; background: #fdecec; color: #9b3535; }
+  .fc-node.start { width: auto; border-radius: 999px; background: var(--code-bg); border-color: #b8bec6; font-weight: 700; padding: 8px 24px; }
+  .fc-arrow { width: 2px; height: 22px; background: #9aa3ad; position: relative; flex-shrink: 0; }
+  .fc-arrow::after { content: ''; position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top: 7px solid #9aa3ad; border-bottom: 0; }
+  .fc-arrow .lab { position: absolute; left: 10px; top: 2px; font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .fc-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; width: 100%; align-items: start; }
+  .fc-col { border: 1px solid var(--border); border-radius: 12px; padding: 14px; background: var(--surface); display: flex; flex-direction: column; align-items: center; }
+  .fc-col-title { align-self: flex-start; font-size: 12.5px; font-weight: 700; margin-bottom: 12px; }
+  .fc-side { display: flex; align-items: center; gap: 8px; width: 100%; margin-top: 6px; }
+  .fc-side .fc-node { flex: 1; }
+  .fc-tag { flex: 0 0 auto; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 10px; background: var(--code-bg); color: var(--muted); }
+  .fc-legend { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 12px; color: var(--muted); margin-top: 14px; }
+  .fc-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; border: 1.5px solid; vertical-align: -2px; margin-right: 5px; }
+  @media (max-width: 760px) { .fc-cols { grid-template-columns: minmax(0, 1fr); } }
 </style>
 </head>
 <body>
@@ -163,6 +186,32 @@ grant_type=<span class="v">refresh_token</span>
 }</div>
 
     <div class="callout"><div class="zh">⚠️ refresh_token 不是永久有效：用户在 Google 账号里撤销授权、或者长期（约 6 个月）没有使用，续期时会返回 <code>invalid_grant</code>，这时需要让用户重新登录一次。</div><div class="en">⚠️ A refresh_token is not valid forever: if the user revokes access in their Google account, or it goes unused for a long time (about 6 months), the renewal request returns <code>invalid_grant</code> and the user has to sign in again.</div></div>
+  </div>
+
+  <div class="flow" id="flow">
+    <h3><span class="zh">前端保持登录的完整流程</span><span class="en">Complete flow: keeping the user signed in</span></h3>
+    <p class="zh muted">前端启动时先看本地有没有后端签发的会话令牌：有就直接用它登录，没有（或被拒绝）才弹出 Google 授权。</p><p class="en muted">On startup the front end first checks for a session token issued by the backend: if there is one it logs in with it directly; only when there is none (or it is rejected) does it open the Google authorization popup.</p>
+    <div class="fc">
+      <div class="fc-node start"><span class="zh">打开页面 / 应用启动</span><span class="en">Open the page / start the app</span></div><div class="fc-arrow"></div>
+      <div class="fc-node dec"><span class="zh">本地有后端签发的会话令牌？</span><span class="en">Is there a backend-issued session token in local storage?</span></div><div class="fc-arrow"></div>
+      <div class="fc-cols">
+        <div class="fc-col">
+          <div class="fc-col-title"><span class="zh">分支 A：有缓存（是）</span><span class="en">Branch A: cached token (Yes)</span></div>
+          <div class="fc-node front"><span class="zh">前端：带着会话令牌请求后端登录</span><span class="en">Front end: send the session token to the backend to log in</span></div><div class="fc-arrow"></div><div class="fc-node dec"><span class="zh">后端校验：会话令牌有效？</span><span class="en">Backend check: is the session token valid?</span></div><div class="fc-side"><span class="fc-tag"><span class="zh">是</span><span class="en">Yes</span></span><div class="fc-node ok"><span class="zh">✓ 登录成功（无弹窗，不涉及 Google）</span><span class="en">✓ Logged in (no popup, Google not involved)</span></div></div><div class="fc-arrow"><span class="lab"><span class="zh">否（已过期）</span><span class="en">No (expired)</span></span></div><div class="fc-node back"><span class="zh">后端用已存的 refresh_token 向 Google 静默续期</span><span class="en">Backend silently renews with Google using the stored refresh_token</span></div><div class="fc-arrow"></div><div class="fc-node dec"><span class="zh">续期成功？</span><span class="en">Renewal succeeded?</span></div><div class="fc-side"><span class="fc-tag"><span class="zh">是</span><span class="en">Yes</span></span><div class="fc-node ok"><span class="zh">✓ 签发新会话令牌，前端无感登录成功</span><span class="en">✓ Issue a new session token; the front end logs in seamlessly</span></div></div><div class="fc-arrow"><span class="lab"><span class="zh">否（invalid_grant）</span><span class="en">No (invalid_grant)</span></span></div><div class="fc-node bad"><span class="zh">返回 401 → 前端清除本地令牌 → 走右侧分支 B 重新授权</span><span class="en">Return 401 → front end clears the local token → go through Branch B on the right to re-authorize</span></div>
+        </div>
+        <div class="fc-col">
+          <div class="fc-col-title"><span class="zh">分支 B：没有缓存（否）或被拒绝</span><span class="en">Branch B: no cache (No) or rejected</span></div>
+          <div class="fc-node front"><span class="zh">前端：弹出 Google 授权窗口（initCodeClient）</span><span class="en">Front end: open the Google authorization popup (initCodeClient)</span></div><div class="fc-arrow"></div><div class="fc-node front"><span class="zh">拿到一次性 code，发给后端</span><span class="en">Get the one-time code and send it to the backend</span></div><div class="fc-arrow"></div><div class="fc-node back"><span class="zh">后端用 code 换 id_token + refresh_token，并保存 refresh_token</span><span class="en">Backend exchanges the code for id_token + refresh_token and stores the refresh_token</span></div><div class="fc-arrow"></div><div class="fc-node back"><span class="zh">后端验签 id_token，签发自己的会话令牌</span><span class="en">Backend verifies the id_token and issues its own session token</span></div><div class="fc-arrow"></div><div class="fc-node front"><span class="zh">前端保存会话令牌（cookie / localStorage）</span><span class="en">Front end stores the session token (cookie / localStorage)</span></div><div class="fc-arrow"></div><div class="fc-node ok"><span class="zh">✓ 登录成功</span><span class="en">✓ Logged in</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="fc-legend">
+      <span><i style="border-color:#7aa7f0;background:#eef4ff"></i><span class="zh">前端</span><span class="en">Front end</span></span>
+      <span><i style="border-color:#e0b25a;background:#fff6e3"></i><span class="zh">后端</span><span class="en">Backend</span></span>
+      <span><i style="border-color:#8b7bd8;background:#f4f1ff;border-style:dashed"></i><span class="zh">判断</span><span class="en">Decision</span></span>
+      <span><i style="border-color:#58b88b;background:#e6f5ee"></i><span class="zh">成功</span><span class="en">Success</span></span>
+      <span><i style="border-color:#e08a8a;background:#fdecec"></i><span class="zh">失败</span><span class="en">Failure</span></span>
+    </div>
   </div>
 
 </div>
