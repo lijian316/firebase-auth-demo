@@ -197,7 +197,7 @@
 
   <section id="background">
     <h2><span class="section-num">1</span><span class="zh">背景说明</span><span class="en">Background</span></h2>
-    <p class="zh">第三方登录（Google / Facebook / Apple）在不同平台上的原生支持程度不同，这是本次调研和方案选型的出发点：</p><p class="en">Native support for third-party sign-in (Google / Facebook / Apple) differs by platform, which is the starting point for this research and solution selection:</p>
+    <p class="zh">Google 登录在不同平台上的原生支持程度不同，这是本次调研和方案选型的出发点：</p><p class="en">Native support for Google sign-in differs by platform, which is the starting point for this research and solution selection:</p>
     <table class="ptable">
       <tr><th><span class="zh">平台</span><span class="en">Platform</span></th><th><span class="zh">原生 Google 登录支持</span><span class="en">Native Google Sign-In</span></th><th><span class="zh">说明</span><span class="en">Notes</span></th></tr>
       <tr>
@@ -327,7 +327,7 @@
       <div class="option-card">
         <div class="option-label"><span class="zh">方案一</span><span class="en">Option 1</span></div>
         <div class="option-title"><span class="zh">接入 Firebase Auth</span><span class="en">Integrate Firebase Auth</span></div>
-        <div class="option-desc"><span class="zh">由 Firebase 统一接管 Google / Facebook / Apple 等登录方式，业务侧只对接 Firebase 提供的 SDK 和用户体系。竞品 Mega Hit Poker 采用的正是这条路径。</span><span class="en">Firebase takes over Google / Facebook / Apple sign-in in one place, and the business side only integrates Firebase’s SDK and user system. Competitor Mega Hit Poker takes exactly this path.</span></div>
+        <div class="option-desc"><span class="zh">由 Firebase 统一接管 Google 登录，业务侧只对接 Firebase 提供的 SDK 和用户体系。竞品 Mega Hit Poker 采用的正是这条路径。</span><span class="en">Firebase takes over Google sign-in in one place, and the business side only integrates Firebase’s SDK and user system. Competitor Mega Hit Poker takes exactly this path.</span></div>
         <div class="option-pros"><b><span class="zh">优势</span><span class="en">Pros</span></b><span class="zh">开发成本低、无需自己维护 Token 刷新逻辑、多个登录方式统一管理、有大公司持续维护</span><span class="en">Low development cost, no need to maintain token refresh logic yourself, multiple sign-in methods managed in one place, actively maintained by a major vendor</span></div>
         <div class="option-cons"><b><span class="zh">需要注意</span><span class="en">Watch out</span></b><span class="zh">用户体系托管在 Firebase，深度定制会受限于 Firebase 的能力边界</span><span class="en">The user system is hosted on Firebase, so deep customization is limited by Firebase’s capabilities</span></div>
       </div>
